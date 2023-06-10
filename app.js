@@ -16,9 +16,13 @@ const startPieces = [
 
 function createBoard() {
     startPieces.forEach( (startPiece, i) =>{
+        // Creating div for each piece and adding class square to it
         const square =document.createElement('div')
         square.classList.add('square')
+        // Setting pieces to the inital position in the board
         square.innerHTML = startPiece
+        // If a square has a piece, then the piece should be draggable
+        square.firstChild ?.setAttribute('draggable', true)
         square.setAttribute('square-id', i)
         const row = Math.floor((63- i) / 8)+1
         if(row % 2 == 0) {
