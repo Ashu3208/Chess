@@ -73,14 +73,28 @@ function dragOver(e) {
 function dragDrop(e) {
     e.stopPropagation()
     console.log(e.target)
+    const correctGo = draggedElement.firstChild.classList.contains(playerGo)
     const taken = e.target.classList.contains('piece')
+    const opponentGo = playerGo === 'white' ? 'black': 'white'
+    const takenByOpponent = e.target.firstChild?.classList.contains(opponentGo)
+
+    if(correctGo){
+        if(takenByOpponent && valid){
+            e.target.parentNode.append(draggedElement)
+            e.target.remove()
+            changePlayer()
+            return
+        }
+    }
 
 
-    // e.target.parentNode.append(draggedElement)
-    // e.target.remove()
+    
     // e.target.append(draggedElement)
-    changePlayer()
 
+}
+
+function valid(){
+    return true
 }
 
 function changePlayer() {
