@@ -3,35 +3,36 @@ body {
     background-color: #1e1e1e;
     margin: 0;
     padding: 0;
+    overflow-y: hidden;
 }
 
 .container {
-    max-width: 400px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #fff;
+    max-width: 50%;
+    margin: 50px auto 10px;
+    padding: 30px;
+    background-color: #888484;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #gameboard {
-    width: 320px;
-    height: 320px;
+    width: 560px;
+    height: 560px;
     display: flex;
     flex-wrap: wrap;
     margin: 0 auto;
 }
 
 .square {
-    width: 40px;
-    height: 40px;
+    width: 70px;
+    height: 70px;
     position: relative;
 }
 
 .square svg {
-    height: 30px;
-    width: 30px;
-    margin: 5px;
+    height: 50px;
+    width: 50px;
+    margin: 10px;
     position: relative;
     z-index: -9;
 }
@@ -69,18 +70,20 @@ path {
     padding: 10px;
     border-radius: 5px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
     transition: opacity 0.3s ease;
     margin-top: 10px;
 }
 
 #info-display.hidden {
     opacity: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
 }
 
 #player-display {
     text-align: center;
-    margin-bottom: 20px;
 }
 
 #player-display p {
@@ -92,3 +95,4 @@ path {
 #player-display #player {
     font-weight: bold;
 }
+
