@@ -69,6 +69,7 @@ function dragDrop(e) {
         if (takenByOpponent && valid) {
             e.target.parentNode.append(draggedElement)
             e.target.remove()
+            checkForWin()
             changePlayer()
             return
         }
@@ -81,6 +82,7 @@ function dragDrop(e) {
         }
         if(valid){
             e.target.append(draggedElement)
+            checkForWin()
             changePlayer()
             return
         }
@@ -293,4 +295,21 @@ function revertIds() {
     allSquares.forEach((square, i) => {
         square.setAttribute('square-id', i)
     })
+}
+
+function checkForWin(){
+    const kings =Array.from(document.querySelectorAll('#king'))
+    console.log(kings)
+    if(!kings.some(king=> king.firstChild.classList.contains('white'))){
+        infoDisplay.classList.remove('hidden');
+        infoDisplay.innerHTML = "Black player wins!"
+        const allSquares = document.querySelectorAll('.square')
+        allSquares.forEach((square) => square.firstChild?.setAttribute('draggable',false))
+    }
+    if(!kings.some(king=> king.firstChild.classList.contains('black'))){
+        infoDisplay.classList.remove('hidden');
+        infoDisplay.innerHTML = "White player wins!"
+        const allSquares = document.querySelectorAll('.square')
+        allSquares.forEach((square) => square.firstChild?.setAttribute('draggable',false))
+    } 
 }
