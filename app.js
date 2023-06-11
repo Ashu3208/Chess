@@ -2,8 +2,8 @@ const gameBoard = document.querySelector('#gameboard')
 const playerDisplay = document.querySelector('#player')
 const infoDisplay = document.querySelector('#info-display')
 const width = 8
-let playerGo = 'black'
-playerDisplay.textContent = 'black'
+let playerGo = 'white'
+playerDisplay.textContent = 'white'
 
 const startPieces = [
     rook, knight, bishop, queen, king, bishop, knight, rook,
@@ -26,10 +26,10 @@ function createBoard() {
         const row = Math.floor((63 - i) / 8) + 1
         square.classList.add(row % 2 === 0 ? (i % 2 === 0 ? "beige" : "brown") : (i % 2 === 0 ? "brown" : "beige"))
         if (i <= 15) {
-            square.firstChild.firstChild.classList.add('black')
+            square.firstChild.firstChild.classList.add('white')
         }
         if (i >= 48) {
-            square.firstChild.firstChild.classList.add('white')
+            square.firstChild.firstChild.classList.add('black')
         }
         gameBoard.append(square)
     })
@@ -274,14 +274,14 @@ function checkIfValid(target) {
 }
 
 function changePlayer() {
-    if (playerGo === 'black') {
+    if (playerGo === 'white') {
         reverseIds()
-        playerGo = 'white'
-        playerDisplay.textContent = 'white'
-    } else {
-        revertIds()
         playerGo = 'black'
         playerDisplay.textContent = 'black'
+    } else {
+        revertIds()
+        playerGo = 'white'
+        playerDisplay.textContent = 'white'
     }
 }
 
