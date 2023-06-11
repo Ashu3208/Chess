@@ -88,7 +88,8 @@ function dragDrop(e) {
 }
 
 function checkIfValid(target) {
-    console.log(target)
+    const targetId = Number(target.getAttribute('square-id')) || Number(target.parentNode.getAttribute('square-id'))
+    console.log(targetId)
 }
 
 function changePlayer() {

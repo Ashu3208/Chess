@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #1e1e1e;
+    background-color: #C2DEDC;
     margin: 0;
     padding: 0;
     overflow-y: hidden;
@@ -10,7 +10,7 @@ body {
     max-width: 40%;
     margin: 50px auto 10px;
     padding: 40px 25px 20px;
-    background-color: #888484;
+    background-color: #F7E6C4;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -52,7 +52,7 @@ path {
 }
 
 .brown {
-    background-color: rgb(169, 43, 43);
+    background-color:#CDC2AE;
 }
 
 .black {
