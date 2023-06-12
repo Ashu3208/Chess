@@ -7,10 +7,10 @@ body {
 
 .container {
     max-width: 80vh;
-    margin: 50px auto 10px;
-    padding: 40px 25px 20px;
+    margin: 6.7vh auto 1.3vh;
+    padding: 5.4vh 3.3vh 2.6vh;
     background-color: #F7E6C4;
-    border-radius: 10px;
+    border-radius: 1.3vh;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -31,7 +31,7 @@ body {
 .square svg {
     height: 6.7vh;
     width: 6.7vh;
-    margin: 10px;
+    margin: 1.3vh;
     position: relative;
     z-index: -9;
 }
@@ -65,13 +65,13 @@ path {
 #info-display {
     background-color: #fff;
     color: #ff0000;
-    font-size: 18px;
-    padding: 10px;
-    border-radius: 5px;
+    font-size: 2.5vh;
+    padding: 1.3vh;
+    border-radius: 0.7vh;
     text-align: center;
     /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
     transition: opacity 0.3s ease;
-    margin-top: 10px;
+    margin-top: 1.3vh;
 }
 
 #info-display.hidden {
@@ -86,7 +86,7 @@ path {
 }
 
 #player-display p {
-    font-size: 24px;
+    font-size: 3.3vh;
     color: #333;
     margin: 0;
 }
