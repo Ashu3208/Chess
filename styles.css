@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-    max-width: 80vh;
+    width: 80vh;
     margin: 6.7vh auto 1.3vh;
     padding: 5.4vh 3.3vh 2.6vh;
     background-color: #F7E6C4;
