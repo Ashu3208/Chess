@@ -3,11 +3,10 @@ body {
     background-color: #C2DEDC;
     margin: 0;
     padding: 0;
-    overflow-y: hidden;
 }
 
 .container {
-    max-width: max(40% , 600px);
+    max-width: 80vh;
     margin: 50px auto 10px;
     padding: 40px 25px 20px;
     background-color: #F7E6C4;
@@ -16,22 +15,22 @@ body {
 }
 
 #gameboard {
-    width: 560px;
-    height: 560px;
+    width: 75.5vh;
+    height: 75.5vh;
     display: flex;
     flex-wrap: wrap;
     margin: 0 auto;
 }
 
 .square {
-    width: 70px;
-    height: 70px;
+    width: 9.4vh;
+    height: 9.4vh;
     position: relative;
 }
 
 .square svg {
-    height: 50px;
-    width: 50px;
+    height: 6.7vh;
+    width: 6.7vh;
     margin: 10px;
     position: relative;
     z-index: -9;
