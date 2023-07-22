@@ -1,3 +1,4 @@
+const socket = io();
 const gameBoard = document.querySelector('#gameboard')
 const playerDisplay = document.querySelector('#player')
 const infoDisplay = document.querySelector('#info-display')
@@ -71,6 +72,7 @@ function dragDrop(e) {
         if (takenByOpponent && valid) {
             e.target.parentNode.append(draggedElement)
             e.target.remove()
+            sendMove(startPositionId, e.target.getAttribute('square-id'));
             checkForWin()
             changePlayer()
             return
@@ -84,6 +86,7 @@ function dragDrop(e) {
         }
         if(valid){
             e.target.append(draggedElement)
+            sendMove(startPositionId, e.target.getAttribute('square-id'));
             checkForWin()
             changePlayer()
             return
@@ -316,3 +319,16 @@ function checkForWin(){
         allSquares.forEach((square) => square.firstChild?.setAttribute('draggable',false))
     } 
 }
+
+function sendMove(startPositionId, targetPositionId) {
+    socket.emit('move', { startPositionId, targetPositionId });
+  }
+
+// Listen for the 'move' event from the server and update the board accordingly
+socket.on('move', ({ startPositionId, targetPositionId }) => {
+    const startPosition = document.querySelector(`[square-id="${startPositionId}"]`);
+    const targetPosition = document.querySelector(`[square-id="${targetPositionId}"]`);
+    targetPosition.append(startPosition.firstChild);
+    changePlayer();
+  });
+  
