@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h2>Welcome to Chess Game!</h2>
+            <p>Please choose an option:</p>
+            <button id="newGameBtn">New Game</button>
+            <button id="joinGameBtn">Join a Game</button>
+        </div>
+    </div>
+
     <div class="container">
         <div id="gameboard"></div>
         <div id="player-display">
@@ -19,5 +29,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
     <script src="pieces.js"></script>
     <script src="app.js"></script>
+    <script src="popup.js"></script>
 </body>
 </html>

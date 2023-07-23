@@ -7,6 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
+const games = {}
 // Handle socket connections
 io.on('connection', (socket) => {
   console.log('A user connected');
