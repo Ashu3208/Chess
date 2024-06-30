@@ -8,19 +8,15 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 const games = {}
-// Handle socket connections
+
 io.on('connection', (socket) => {
   console.log('A user connected');
 
-  // Listen for the 'move' event from the client
   socket.on('move', ({ startPositionId, targetPositionId }) => {
-    // Broadcast the move to all other connected clients
     socket.broadcast.emit('move', { startPositionId, targetPositionId });
   });
-  // Handle disconnections
   socket.on('disconnect', () => {
     console.log('A user disconnected');
-    // Implement any necessary cleanup or logic here.
   });
 });
 
@@ -30,6 +26,13 @@ app.use('/game', express.static('public'))
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html')); 
   });
+
+app.post('/new-game', (req, res) => {
+    const newGameId = `${Date.now()}`; // Generate a unique ID
+    games[newGameId] = { /* game state */ };
+    console.log(games)
+    res.json({ gameId: newGameId });
+});
 
 app.get('/game/:id', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html')); 
