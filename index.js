@@ -24,13 +24,17 @@ io.on('connection', (socket) => {
   });
 });
 
-// Serve static files from the 'public' directory (adjust the path as needed)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname,'/public')));
+app.use('/game', express.static('public'))
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/index.html')); // Use path.join() to get the absolute path
+    res.sendFile(path.join(__dirname, 'index.html')); 
   });
 
+app.get('/game/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public/index.html')); 
+  });
+  
 // Start the server
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
