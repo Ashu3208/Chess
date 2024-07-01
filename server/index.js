@@ -20,8 +20,8 @@ io.on('connection', (socket) => {
   });
 });
 
-app.use(express.static(path.join(__dirname,'/public')));
-app.use('/game', express.static('public'))
+app.use(express.static(path.join(__dirname,'../client/public')));
+app.use('/game', express.static(path.join(__dirname, '../client/public')))
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html')); 
@@ -35,7 +35,7 @@ app.post('/new-game', (req, res) => {
 });
 
 app.get('/game/:id', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/index.html')); 
+    res.sendFile(path.join(__dirname, '../client/public/index.html')); 
   });
   
 // Start the server
