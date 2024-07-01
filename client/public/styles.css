@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #C2DEDC;
+    background-color: #4b4847;
     margin: 0;
     padding: 0;
 }
@@ -9,7 +9,7 @@ body {
     width: 80vh;
     margin: 6.7vh auto 1.3vh;
     padding: 5.4vh 3.3vh 2.6vh;
-    background-color: #F7E6C4;
+    background-color: #DBE7C9;
     border-radius: 1.3vh;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -47,7 +47,7 @@ path {
 }
 
 .beige {
-    background-color: rgb(110, 110, 98);
+    background-color: #4e7837;
 }
 
 .brown {
