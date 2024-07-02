@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
@@ -6,11 +5,14 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
+const { v4: uuidv4 } = require('uuid');
+const router = require('./routes/router')
+app.use('/game',router)
 
 const games = {}
 
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  console.log('A user connected' , socket.id);
 
   socket.on('move', ({ startPositionId, targetPositionId }) => {
     socket.broadcast.emit('move', { startPositionId, targetPositionId });
@@ -26,13 +28,6 @@ app.use('/game', express.static(path.join(__dirname, '../client/public')))
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html')); 
   });
-
-app.post('/new-game', (req, res) => {
-    const newGameId = `${Date.now()}`; // Generate a unique ID
-    games[newGameId] = { /* game state */ };
-    console.log(games)
-    res.json({ gameId: newGameId });
-});
 
 app.get('/game/:id', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/public/index.html')); 

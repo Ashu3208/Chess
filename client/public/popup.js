@@ -12,21 +12,18 @@ function hidePopup(name) {
 
 document.getElementById('newGameBtn').addEventListener('click', () => {
   console.log('New Game button clicked');
-  fetch('/new-game', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
+  fetch('/game/new',{
+    method:'GET'
+  }).then(response => {
+    if (response.redirected) {
+      window.location.href = response.url; 
+    } else {
+      console.log('Response received but not redirected:', response);
     }
   })
-    .then(response => response.json())
-    .then(data => {
-      const newGameId = data.gameId;
-      console.log('New game created with ID:', newGameId);
-      window.location.href = `/game/${newGameId}`;
-    })
-    .catch(error => {
-      console.error('Error creating new game:', error);
-    });
+  .catch(error => {
+    console.error('Error fetching new game:', error);
+  });
 });
 
 document.getElementById('joinGameBtn').addEventListener('click', () => {
@@ -40,16 +37,25 @@ document.getElementById('joinGameBtn').addEventListener('click', () => {
 document.getElementById('joinBtn').addEventListener('click', () => {
 
   console.log('Join button clicked');
-  const gameIdInput = document.querySelector('input[name="gameId"]');
-  const gameId = gameIdInput.value;
+  const gameId = document.querySelector('input[name="gameId"]').value;
   console.log(gameId)
-  if (gameId) {
-    console.log('Joining game with ID:', gameId);
-    window.location.href = `/game/${gameId}`;
-  } else {
-    console.error('Game ID is required to join a game.');
-  }
-
+  fetch('/game/join',{
+    method:"POST",
+    headers:{
+      'Content-type': 'application/json',
+    },
+    body:JSON.stringify({joinId:gameId}),
+    redirect:"follow"
+  }).then(response=>{
+    if (response.redirected) {
+      window.location.href = response.url; 
+    } else {
+      console.log('Response received but not redirected:', response);
+    }
+  }).catch(error=>{
+    console.error('Error joining the game:', error);
+  })
+ 
 });
 
 document.getElementById('cancelBtn').addEventListener('click', () => {
