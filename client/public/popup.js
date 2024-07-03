@@ -14,9 +14,16 @@ document.getElementById('newGameBtn').addEventListener('click', () => {
   console.log('New Game button clicked');
   fetch('/game/new',{
     method:'GET'
-  }).then(response => {
-    if (response.redirected) {
-      window.location.href = response.url; 
+  }).then(response =>response.json())
+   .then(data=>{
+      if(data.joinGameId) {
+        const roomId = document.querySelector('#roomId')
+        window.localStorage.setItem('roomId', data.joinGameId);
+      } 
+      if (data.newGameId) {
+        const roomUrl = document.querySelector('#roomUrl')
+        window.localStorage.setItem('roomUrl', data.newGameId); 
+        window.location.href = `/game/${roomUrl}`; 
     } else {
       console.log('Response received but not redirected:', response);
     }
@@ -45,7 +52,6 @@ document.getElementById('joinBtn').addEventListener('click', () => {
       'Content-type': 'application/json',
     },
     body:JSON.stringify({joinId:gameId}),
-    redirect:"follow"
   }).then(response=>{
     if (response.redirected) {
       window.location.href = response.url; 
@@ -74,4 +80,27 @@ window.addEventListener('load', () => {
     hidePopup('popup');
     hidePopup('join-popup');
   }
+});
+
+
+const modal = document.querySelector("#modal");
+const openModal = document.querySelector(".open-button");
+const closeModal = document.querySelector(".close-button");
+
+openModal.addEventListener("click", () => {
+  const storedRoomUrl = window.localStorage.getItem('roomUrl');
+  const storedRoomId = window.localStorage.getItem('roomId');
+  if (storedRoomUrl) {
+    const roomUrl = document.querySelector('#roomUrl');
+    roomUrl.textContent = "http://localhost:3000/game/"+storedRoomUrl; 
+  }
+  if (storedRoomId) {
+    const roomId = document.querySelector('#roomId');
+    roomId.textContent=storedRoomId  
+  }
+  modal.showModal();
+});
+
+closeModal.addEventListener("click", () => {
+  modal.close();
 });

@@ -35,10 +35,23 @@
         </div>
         <p id="info-display" class="hidden"></p>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
-    <script src="pieces.js"></script>
-    <script src="app.js"></script>
-    <script src="popup.js"></script>
+        
+
+<button class="button open-button">Show Room Id</button>
+
+<dialog class="modal" id="modal">
+  <h2>Share with your friends</h2>
+  <p>Room Id: <span id="roomId"></span> </p>
+  <p>Room url: <span id="roomUrl"></span> </p>
+  <button class="button close-button">Close</button>
+
+</dialog>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+<script src="pieces.js"></script>
+<script src="app.js"></script>
+<script src="popup.js"></script>
     
 </body>
 </html>
