@@ -5,11 +5,15 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
-const { v4: uuidv4 } = require('uuid');
+require('dotenv').config()
+const dbConnection = require('./database/connection');
 const router = require('./routes/router')
 app.use('/game',router)
 
 const games = {}
+app.use('/game', express.static(path.join(__dirname, '../client/public')))
+app.use(express.static(path.join(__dirname,'../client/public')));
+dbConnection()
 
 io.on('connection', (socket) => {
   console.log('A user connected' , socket.id);
@@ -22,8 +26,6 @@ io.on('connection', (socket) => {
   });
 });
 
-app.use(express.static(path.join(__dirname,'../client/public')));
-app.use('/game', express.static(path.join(__dirname, '../client/public')))
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html')); 
