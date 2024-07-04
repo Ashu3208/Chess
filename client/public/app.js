@@ -75,6 +75,8 @@ function dragDrop(e) {
             sendMove(startPositionId, e.target.getAttribute('square-id'));
             checkForWin()
             changePlayer()
+            var snd = new Audio("assets/move-self.mp3"); 
+            snd.play();
             return
         }
 
@@ -89,6 +91,8 @@ function dragDrop(e) {
             sendMove(startPositionId, e.target.getAttribute('square-id'));
             checkForWin()
             changePlayer()
+            var snd = new Audio("assets/move-self.mp3"); 
+            snd.play();
             return
         }
     }

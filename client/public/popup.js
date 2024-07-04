@@ -17,13 +17,11 @@ document.getElementById('newGameBtn').addEventListener('click', () => {
   }).then(response =>response.json())
    .then(data=>{
       if(data.joinGameId) {
-        const roomId = document.querySelector('#roomId')
         window.localStorage.setItem('roomId', data.joinGameId);
-      } 
-      if (data.newGameId) {
-        const roomUrl = document.querySelector('#roomUrl')
-        window.localStorage.setItem('roomUrl', data.newGameId); 
-        window.location.href = `/game/${roomUrl}`; 
+      }
+      if (data.roomUrl) {
+        window.localStorage.setItem('roomUrl', data.roomUrl); 
+        window.location.href = `/game/${data.newGameId}`; 
     } else {
       console.log('Response received but not redirected:', response);
     }
@@ -92,7 +90,7 @@ openModal.addEventListener("click", () => {
   const storedRoomId = window.localStorage.getItem('roomId');
   if (storedRoomUrl) {
     const roomUrl = document.querySelector('#roomUrl');
-    roomUrl.textContent = "http://localhost:3000/game/"+storedRoomUrl; 
+    roomUrl.textContent = storedRoomUrl; 
   }
   if (storedRoomId) {
     const roomId = document.querySelector('#roomId');

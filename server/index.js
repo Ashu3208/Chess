@@ -8,9 +8,9 @@ const io = socketIO(server);
 require('dotenv').config()
 const dbConnection = require('./database/connection');
 const router = require('./routes/router')
-app.use('/game',router)
-
 const games = {}
+
+app.use('/game',router)
 app.use('/game', express.static(path.join(__dirname, '../client/public')))
 app.use(express.static(path.join(__dirname,'../client/public')));
 dbConnection()
@@ -36,7 +36,7 @@ app.get('/game/:id', (req, res) => {
   });
   
 // Start the server
-const port = process.env.PORT || 3000;
+const port = process.env.SERVER_PORT || 3000;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
