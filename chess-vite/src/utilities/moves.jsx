@@ -1,11 +1,21 @@
 const width = 8
-let playerGo = 'white'
-// playerDisplay.textContent = 'white'
 import moveSelfSound from '../assets/move-self.mp3';
 
+export const startPieces = [
+    "rook", "knight", "bishop", "king", "queen", "bishop", "knight", "rook",
+    "pawn", "pawn", "pawn", "pawn", "pawn", "pawn", "pawn", "pawn",
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '',
+    "pawn", "pawn", "pawn", "pawn", "pawn", "pawn", "pawn", "pawn",
+    "rook", "knight", "bishop", "king", "queen", "bishop", "knight", "rook"
+]
 
-let startPositionId
-let draggedElement
+export const getColor = (i) => {
+    const row = Math.floor((63 - i) / 8) + 1
+    return (row % 2 === 0 ? (i % 2 === 0 ? "brown" : "beige") : (i % 2 === 0 ? "beige" : "brown"));
+}
 
 export function dragStart(e, setDraggedElement, setStartPositionId) {
     setDraggedElement(e.target);
@@ -16,19 +26,20 @@ export function dragOver(e) {
     e.preventDefault();
 }
 
-export function dragDrop(e, draggedElement, playerGo, togglePlayer, startPositionId) {
+export function dragDrop(e, draggedElement, playerGo, togglePlayer, startPositionId ,setInfoMessage) {
     e.stopPropagation();
     const correctGo = draggedElement.firstChild.classList.contains(playerGo);
     const taken = e.target.classList.contains('piece');
-    const valid = checkIfValid(e.target, draggedElement, startPositionId); // Define checkIfValid function according to your logic
+    const valid = checkIfValid(e.target, draggedElement, startPositionId);
     const opponentGo = playerGo === 'white' ? 'black' : 'white';
     const takenByOpponent = e.target.firstChild?.classList.contains(opponentGo);
+    const infoDisplay = document.querySelector('#info-display')
     if (correctGo) {
         if (takenByOpponent && valid) {
             e.target.parentNode.append(draggedElement);
             e.target.remove();
             // sendMove(startPositionId, e.target.getAttribute('square-id'));
-            checkForWin(); // Define checkForWin function according to your logic
+            checkForWin(infoDisplay); 
             changePlayer(togglePlayer,playerGo)
             const snd = new Audio(moveSelfSound);
             snd.play();
@@ -36,16 +47,14 @@ export function dragDrop(e, draggedElement, playerGo, togglePlayer, startPositio
         }
 
         if (taken) {
-            infoDisplay.classList.remove('hidden'); // Define infoDisplay and its manipulation in your component
-            infoDisplay.textContent = "You cannot go here";
-            setTimeout(() => infoDisplay.classList.add('hidden'), 1000);
+            setInfoMessage("You cannot go here");
             return;
         }
 
         if(valid){
             e.target.append(draggedElement);
             // sendMove(startPositionId, e.target.getAttribute('square-id'));
-            checkForWin();
+            checkForWin(infoDisplay);
             changePlayer(togglePlayer,playerGo)
             const snd = new Audio(moveSelfSound);
             snd.play();
@@ -55,13 +64,9 @@ export function dragDrop(e, draggedElement, playerGo, togglePlayer, startPositio
 }
 
 function checkIfValid(target,draggedElement,startPositionId) {
-    console.log("target ",target)
     const targetId = Number(target.getAttribute('square-id')) || Number(target.parentNode.getAttribute('square-id'))
     const startId = Number(startPositionId)
     const piece = draggedElement.id
-    console.log('targetId',targetId)
-    console.log('startId',startId)
-    console.log('piece',piece)
 
     switch (piece){
         case 'pawn':
@@ -245,11 +250,9 @@ const changePlayer = (togglePlayer,playerGo) => {
         if (playerGo === 'white') {
             reverseIds();
             togglePlayer("black")
-            // playerDisplay.textContent = 'black';
         } else {
             revertIds();
             togglePlayer("white")
-            // playerDisplay.textContent = 'white';
         }
     
 };
@@ -266,7 +269,7 @@ function revertIds() {
     })
 }
 
-function checkForWin(){
+function checkForWin(infoDisplay){
     const kings =Array.from(document.querySelectorAll('#king'))
     console.log(kings)
     if(!kings.some(king=> king.firstChild.classList.contains('white'))){
