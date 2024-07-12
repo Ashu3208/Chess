@@ -3,6 +3,13 @@ body {
     background-color: #4b4847;
     margin: 0;
     padding: 0;
+    overflow-y: hidden;
+}
+
+#root {
+  max-width: 1280px;
+  margin:  auto;
+  padding: auto;
 }
 
 .container {
