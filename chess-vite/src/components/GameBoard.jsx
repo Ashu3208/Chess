@@ -1,7 +1,7 @@
 import {React, useState, useEffect} from "react";
 import Piece from "./Pieces";
 import { dragStart, dragOver, dragDrop, startPieces, getColor } from "../utilities/moves"; 
-
+import '../styles.css'
 export default function GameBoard() {
     const [playerGo, setPlayerGo] = useState('white');
     const [draggedElement, setDraggedElement] = useState(null);

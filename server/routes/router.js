@@ -27,7 +27,7 @@ router.get('/new', (req,res)=>{
     var joinGameId = generateJoinId(1,4)
     toGameId.set(joinGameId,newGameId)
     console.log(joinGameId)
-    const url=process.env.SERVER_URI+'/game/'+newGameId
+    const url=process.env.CLIENT_URI+'/game/'+newGameId
     res.json({ newGameId: newGameId, joinGameId:joinGameId, roomUrl:url  });
     // res.redirect(`/game/${newGameId}`)
 })

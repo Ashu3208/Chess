@@ -1,39 +1,34 @@
 import React, { useState } from 'react';
 import { Modal, Box, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const GamePopup = () => {
-  const [open, setOpen] = useState(true);
-
+const GamePopup = ({open, toggleGamePopup}) => {
+  const navigate = useNavigate();
   const handleNewGame = () => {
+    toggleGamePopup()
     console.log('New Game button clicked');
-    fetch('/game/new', {
+    fetch('http://localhost:3000/game/new', {
       method: 'GET'
     })
       .then(response => response.json())
       .then(data => {
-        if (data.joinGameId) {
-          window.localStorage.setItem('roomId', data.joinGameId);
-        }
-        if (data.roomUrl) {
-          window.localStorage.setItem('roomUrl', data.roomUrl);
-          window.location.href = `/game/${data.newGameId}`;
-        } else {
-          console.log('Response received but not redirected:', response);
-        }
+        console.log(data)
+        // navigate(data.roomUrl)
+        window.location.href = data.roomUrl;
       })
       .catch(error => {
         console.error('Error fetching new game:', error);
       });
+      
   };
 
   const handleJoinGame = () => {
     console.log('Join a Game button clicked');
-    setOpen(false);
     // Implement showPopup('join-popup') logic here
   };
 
   return (
-    <Modal open={open} onClose={() => setOpen(false)}>
+    <Modal open={open}>
       <Box
         sx={{
           position: 'absolute',

@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const path = require('path');
+var cors = require('cors')
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -10,6 +11,11 @@ const dbConnection = require('./database/connection');
 const router = require('./routes/router')
 const games = {}
 
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use('/',cors(corsOptions))
 app.use('/game',router)
 app.use('/game', express.static(path.join(__dirname, '../client/public')))
 app.use(express.static(path.join(__dirname,'../client/public')));
