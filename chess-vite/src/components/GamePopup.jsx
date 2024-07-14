@@ -7,7 +7,7 @@ const GamePopup = ({open, toggleGamePopup}) => {
   const handleNewGame = () => {
     toggleGamePopup()
     console.log('New Game button clicked');
-    fetch('http://localhost:3000/game/new', {
+    fetch(`${import.meta.env.VITE_SERVER_URI}/game/new`, {
       method: 'GET'
     })
       .then(response => response.json())
