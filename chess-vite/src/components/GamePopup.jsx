@@ -4,17 +4,19 @@ import { useNavigate } from 'react-router-dom';
 
 const GamePopup = ({open, toggleGamePopup}) => {
   const navigate = useNavigate();
-  const handleNewGame = () => {
+  const handleNewGame = async() => {
     toggleGamePopup()
     console.log('New Game button clicked');
-    fetch(`${import.meta.env.VITE_SERVER_URI}/game/new`, {
+    console.log(import.meta.env.VITE_SERVER_URI)
+    const uri = `${import.meta.env.VITE_SERVER_URI}/game/new`
+    await fetch(uri, {
       method: 'GET'
     })
       .then(response => response.json())
       .then(data => {
         console.log(data)
         // navigate(data.roomUrl)
-        window.location.href = data.roomUrl;
+        // window.location.href = data.roomUrl;
       })
       .catch(error => {
         console.error('Error fetching new game:', error);
