@@ -27,16 +27,15 @@ router.get('/new', (req,res)=>{
     var joinGameId = generateJoinId(1,4)
     toGameId.set(joinGameId,newGameId)
     console.log(joinGameId)
-    const url=process.env.CLIENT_URI+'/game/'+newGameId
+    const url='/game/'+newGameId
     res.json({ newGameId: newGameId, joinGameId:joinGameId, roomUrl:url  });
-    // res.redirect(`/game/${newGameId}`)
 })
 router.post('/join', (req,res)=>{
     const gameId = req.body.joinId
     console.log(req.body , gameId, toGameId.get(gameId))
     var roomId = toGameId.get(gameId)
-    if(toGameId.has(gameId))res.redirect(`/game/${roomId}`)
-    else res.redirect('/')
+    if(toGameId.has(gameId))res.json({roomUrl:`/game/${roomId}`})
+    else res.status(400).json({ error: 'Invalid gameId. Please check the ID and try again.' });
 })
 const chessWords = [
     'pawn', 'knight', 'bishop', 'rook', 'queen', 'king', 'check', 'mate', 'castle',

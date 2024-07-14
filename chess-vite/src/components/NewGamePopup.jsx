@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Modal, Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-const GamePopup = ({open, toggleGamePopup}) => {
+const NewGamePopup = ({open, toggleNewGamePopup, toggleJoinGamePopup}) => {
   const navigate = useNavigate();
   const handleNewGame = async() => {
-    toggleGamePopup()
+    toggleNewGamePopup()
     console.log('New Game button clicked');
     console.log(import.meta.env.VITE_SERVER_URI)
     const uri = `${import.meta.env.VITE_SERVER_URI}/game/new`
@@ -15,7 +15,7 @@ const GamePopup = ({open, toggleGamePopup}) => {
       .then(response => response.json())
       .then(data => {
         console.log(data)
-        // navigate(data.roomUrl)
+        navigate(data.roomUrl)
         // window.location.href = data.roomUrl;
       })
       .catch(error => {
@@ -26,7 +26,9 @@ const GamePopup = ({open, toggleGamePopup}) => {
 
   const handleJoinGame = () => {
     console.log('Join a Game button clicked');
-    // Implement showPopup('join-popup') logic here
+    toggleNewGamePopup()
+    toggleJoinGamePopup()
+    
   };
 
   return (
@@ -58,4 +60,4 @@ const GamePopup = ({open, toggleGamePopup}) => {
   );
 };
 
-export default GamePopup;
+export default NewGamePopup;
