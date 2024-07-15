@@ -8,18 +8,25 @@ const server = http.createServer(app);
 const io = socketIO(server);
 require('dotenv').config()
 const dbConnection = require('./database/connection');
-const router = require('./routes/router')
+const gameRouter = require('./routes/gameRouter')
+const userRouter = require('./routes/userRouter')
 const games = {}
 
+dbConnection()
+
+
+//CORS configuration
 var corsOptions = {
   origin: '*',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use('/',cors(corsOptions))
-app.use('/game',router)
-app.use('/game', express.static(path.join(__dirname, '../client/public')))
-app.use(express.static(path.join(__dirname,'../client/public')));
-dbConnection()
+
+// Routes configuration
+app.use('/game',gameRouter)
+app.use('/user',userRouter)
+
+
 
 io.on('connection', (socket) => {
   console.log('A user connected' , socket.id);
@@ -33,14 +40,6 @@ io.on('connection', (socket) => {
 });
 
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html')); 
-  });
-
-app.get('/game/:id', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/public/index.html')); 
-  });
-  
 // Start the server
 const port = process.env.SERVER_PORT || 3000;
 server.listen(port, () => {

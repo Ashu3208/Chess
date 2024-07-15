@@ -12,13 +12,11 @@ const toGameId = new Map()
 router.use(express.json())
 // router.use(timeLog)
 
+//Get routes
 router.get('/', (req, res) => {
     res.send('Game endpoint')
 })
-router.post('/getMap', (req,res)=>{
-    console.log(toGameId)
-    res.json(Object.fromEntries(toGameId))
-})
+
 router.get('/new', (req,res)=>{
     const newGameId = uuidv4(); // Generate a unique ID
     console.log('new Game Id ',newGameId)
@@ -30,6 +28,8 @@ router.get('/new', (req,res)=>{
     const url='/game/'+newGameId
     res.json({ newGameId: newGameId, joinGameId:joinGameId, roomUrl:url  });
 })
+
+//Post Routes
 router.post('/join', (req,res)=>{
     const gameId = req.body.joinId
     console.log(req.body , gameId, toGameId.get(gameId))
@@ -37,6 +37,7 @@ router.post('/join', (req,res)=>{
     if(toGameId.has(gameId))res.json({roomUrl:`/game/${roomId}`})
     else res.status(400).json({ error: 'Invalid gameId. Please check the ID and try again.' });
 })
+
 const chessWords = [
     'pawn', 'knight', 'bishop', 'rook', 'queen', 'king', 'check', 'mate', 'castle',
     'enpassant', 'stalemate', 'draw', 'gambit', 'fianchetto', 'blitz', 'fork', 'pin', 'skewer'
@@ -53,4 +54,11 @@ function generateJoinId(numberOfWords,numberOfDigits){
     if(toGameId.has(newJoinID))return generateJoinId(numberOfWords+1,numberOfDigits*2)
     return newJoinID
 }
+
+router.post('/getMap', (req,res)=>{
+    console.log(toGameId)
+    res.json(Object.fromEntries(toGameId))
+})
+
+
 module.exports = router

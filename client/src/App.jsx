@@ -2,6 +2,7 @@ import React from 'react'
 import GameBoard from './components/GameBoard'
 import Home from './components/Home'
 import { createBrowserRouter,RouterProvider, BrowserRouter as Router, Routes, Route} from "react-router-dom"
+import SignUp from './components/SignUp'
 
 function App() {
   
@@ -12,9 +13,7 @@ function App() {
     },
     {
       path:'/signUp',
-      element: (
-        <div>Sign Up Page</div>
-      )
+      element: <SignUp />
     },
     {
       path:'/login',
