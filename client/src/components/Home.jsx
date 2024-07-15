@@ -33,6 +33,9 @@ export default function Home() {
                         Home
                     </Typography>
                     <Typography component={Link} to='/signup'  sx={{ textDecoration: 'none', color: '#508D4E' }}>
+                        Play
+                    </Typography>
+                    <Typography component={Link} to='/signup'  sx={{ textDecoration: 'none', color: '#508D4E' }}>
                         Sign Up
                     </Typography>
                     <Typography component={Link} to='/login'  sx={{ textDecoration: 'none', color: '#508D4E' }}>

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { v4: uuidv4} = require('uuid');
+const authController = require("../controllers/auth/user");
 
 router.use(express.json())
 
@@ -11,8 +11,6 @@ router.get('/', (req, res) => {
 
 //Post Routes
 
-router.post('/signup', (req,res)=>{
-    console.log(req.body)
-    res.status(200)
-})
+router.post('/signup', authController.register)
+router.post('/login', authController.login)
 module.exports = router

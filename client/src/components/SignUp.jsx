@@ -11,12 +11,19 @@ export default function SignUp() {
     // console.log(userDetails)
   }
 
+  const clearForm=()=>{
+    setUserDetails({email:"",password:"",username:""})
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
     const uri =  `${import.meta.env.VITE_SERVER_URI}/user/signup`
     axios.post(uri,{
       userDetails
     })
+      .then((result)=>{console.log(result)})
+      .catch((error)=>{console.log(error)})
+
+    clearForm()
   };
 
   return (
