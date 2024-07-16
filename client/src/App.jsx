@@ -3,7 +3,7 @@ import GameBoard from './components/GameBoard'
 import Home from './components/Home'
 import { createBrowserRouter,RouterProvider, BrowserRouter as Router, Routes, Route} from "react-router-dom"
 import SignUp from './components/SignUp'
-
+import Login from './components/Login'
 function App() {
   
   const router = createBrowserRouter([
@@ -17,9 +17,7 @@ function App() {
     },
     {
       path:'/login',
-      element: (
-        <div>Log In Page</div>
-      )
+      element: <Login />
     },
     {
       path:'/game/:roomUrl',

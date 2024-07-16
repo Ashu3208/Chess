@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const authController = require("../controllers/auth/user");
+const authMiddleware = require("../middleware/auth")
 
 router.use(express.json())
 
@@ -13,4 +14,5 @@ router.get('/', (req, res) => {
 
 router.post('/signup', authController.register)
 router.post('/login', authController.login)
+router.post('/valid',authMiddleware,(req,res)=>res.send(req.user))
 module.exports = router

@@ -21,7 +21,6 @@ exports.register = async(req,res) =>{
           email,
           password:hashedPassword,
         });
-        console.log(newUser);
     
         const registered = await newUser.save();
         if (registered) {
@@ -39,6 +38,7 @@ exports.register = async(req,res) =>{
 exports.login = async(req,res) =>{
     try {
         const {email, password } = req.body;
+        console.log(req.body)
         if (!email || !password) {
           return res.status(400).json({ msg: "Invalid data" });
         }
