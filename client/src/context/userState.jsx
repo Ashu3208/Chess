@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import UserContext from "./usercontext";
+import UserContext from "./user";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 const BASE_URL = import.meta.env.VITE_SERVER_URI;
@@ -15,7 +15,7 @@ const UserStateProvider = (props) => {
 
   const getCurrUser = async () => {
     try {
-      const token = cookies.get("auth");
+      const token = cookies.get("TOKEN");
       const res = await axios.get(`${BASE_URL}/user/valid`, {
         headers: {
           Accept: "application/json",

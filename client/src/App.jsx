@@ -12,7 +12,7 @@ function App() {
       element: <Home />
     },
     {
-      path:'/signUp',
+      path:'/register',
       element: <SignUp />
     },
     {

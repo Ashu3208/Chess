@@ -3,9 +3,9 @@ const User = require("../database/models/user");
 
 const Authenticate = async (req, res, next) => {
   try {
+    // console.log(here)
     const token = await req.headers.authorization.split(" ")[1];
-    const verified = await jwt.verify(token, process.env.JWT_SECRET);
-
+    const verified =  jwt.verify(token, process.env.JWT_SECRET)
     const user = await User.findOne({
       _id: verified._id,
     });
