@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, TextField, ThemeProvider, createTheme } from "@mui/material";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+import Cookies from "universal-cookie";
+import UserContext from "../context/user";
 
-export default function SignUp() {
+export default function Register() {
+  
   const navigate = useNavigate()
+  const authUser = useContext(UserContext)
+  const cookies = new Cookies()
+
   const [userDetails, setUserDetails] = useState({ email: "", password: "", username: "" })
 
   const handleChange = (e) => {
@@ -13,21 +19,25 @@ export default function SignUp() {
     // console.log(userDetails)
   }
 
-  const clearForm = () => {
-    setUserDetails({ email: "", password: "", username: "" })
-  }
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const uri = `${import.meta.env.VITE_SERVER_URI}/user/signup`
+    const uri = `${import.meta.env.VITE_SERVER_URI}/user/register`
     const { username, email, password } = userDetails
-    axios.post(
+    const res = await axios.post(
       uri,
       {
         username, email, password
       }
     )
-      .then((result) => { console.log(result); clearForm() })
-      .catch((error) => { console.log(error) })
+    if (res.status == 201) {
+      cookies.set("TOKEN", res.data.token, { path: '/' })
+      authUser.getCurrUser();
+      navigate('/')
+      // navigate(0)
+
+    } else {
+      console.log(res.data)
+    }
 
 
   };
@@ -70,9 +80,9 @@ export default function SignUp() {
         <TextField id="outlined-basic" label="Username" variant="outlined" name="username" value={userDetails.username} onChange={handleChange} />
         <TextField id="outlined-basic" label="Email" variant="outlined" name="email" value={userDetails.email} onChange={handleChange} />
         <TextField id="outlined-basic" label="Password" variant="outlined" name="password" value={userDetails.password} onChange={handleChange} />
-        <button type="submit">Submit</button>
+        <Button type="submit">Submit</Button>
       </form>
-      <Button onClick={()=>navigate('/login')}>Log In</Button>
+      <Button onClick={() => navigate('/login')}>Log In</Button>
     </ThemeProvider>
   );
 }

@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 
 //Post Routes
 
-router.post('/signup', authController.register)
+router.post('/register', authController.register)
 router.post('/login', authController.login)
 router.get('/valid',authMiddleware,(req,res)=>res.send(req.user))
 module.exports = router

@@ -74,7 +74,7 @@ export default function Login() {
             <form onSubmit={handleSubmit}>
                 <TextField id="outlined-basic" label="Email" variant="outlined" name="email" value={userDetails.email} onChange={handleChange} />
                 <TextField id="outlined-basic" label="Password" variant="outlined" name="password" value={userDetails.password} onChange={handleChange} />
-                <button type="submit">Submit</button>
+                <Button type="submit">Submit</Button>
             </form>
             <Button onClick={()=>navigate('/register')}>New? Sign Up </Button>
         </ThemeProvider>

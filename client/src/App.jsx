@@ -2,7 +2,7 @@ import React from 'react'
 import GameBoard from './components/GameBoard'
 import Home from './components/Home'
 import { createBrowserRouter,RouterProvider, BrowserRouter as Router, Routes, Route} from "react-router-dom"
-import SignUp from './components/SignUp'
+import Register from './components/Register'
 import Login from './components/Login'
 function App() {
   
@@ -13,7 +13,7 @@ function App() {
     },
     {
       path:'/register',
-      element: <SignUp />
+      element: <Register />
     },
     {
       path:'/login',
@@ -26,6 +26,16 @@ function App() {
           <GameBoard />
         </div>
       )
+    },
+    {
+      path:'/play',
+      element:(
+        <h1 style={{color:'white'}}>In development</h1>
+      )
+    },
+    {
+      path:'/*',
+      element:(<p style={{color:'white'}} >You have been lost. Click <a href='/'>here</a> to return. </p> )
     }
   ])
 

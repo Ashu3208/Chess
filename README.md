@@ -7,12 +7,14 @@ Latest Changes
 
 
 ### ToDo:
-- Style the room Id modal and home page popup
+- Show error on UI while login or register, if any
+- Add an eye icon for password, Empty fields not allowed in register and login page
+- Add loader for smooth transition
+- Add and Style the room Id modal and home page popup
 - Changes are reflected when pieces are moved but not captured. 
 - Use tailwind CSS for styling
 - Restrict 2 users per game
 - Restrict user for playing opponent's pieces
-- Add a sign in option
 - Provide stats of games played
 - Add button to undo moves 
 - Show moves played on the right hand side
