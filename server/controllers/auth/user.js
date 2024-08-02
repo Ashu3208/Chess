@@ -60,7 +60,6 @@ exports.login = async(req,res) =>{
           res.status(401).json({ msg: "Invalid username or password" });
         }
       } catch (err) {
-        console.log(err);
         res.status(403).json({ error: err });
       }
 }

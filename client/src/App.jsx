@@ -4,6 +4,8 @@ import Home from './components/Home'
 import { createBrowserRouter,RouterProvider, BrowserRouter as Router, Routes, Route} from "react-router-dom"
 import Register from './components/Register'
 import Login from './components/Login'
+import Play from './components/Play'
+
 function App() {
   
   const router = createBrowserRouter([
@@ -29,9 +31,7 @@ function App() {
     },
     {
       path:'/play',
-      element:(
-        <h1 style={{color:'white'}}>In development</h1>
-      )
+      element:<Play />
     },
     {
       path:'/*',

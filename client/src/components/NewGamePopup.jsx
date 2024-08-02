@@ -32,7 +32,7 @@ const NewGamePopup = ({open, toggleNewGamePopup, toggleJoinGamePopup}) => {
   };
 
   return (
-    <Modal open={open}>
+    <Modal open={open} onClose={toggleNewGamePopup}>
       <Box
         sx={{
           position: 'absolute',

@@ -16,7 +16,7 @@ const Authenticate = async (req, res, next) => {
     next();
   } catch (err) {
     res.status(401).send("Didn't find token!");
-    console.log(err);
+    // console.log(err);
   }
 };
 

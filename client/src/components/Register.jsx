@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Button, TextField, ThemeProvider, createTheme } from "@mui/material";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
@@ -71,6 +71,12 @@ export default function Register() {
         },
       },
     },
+  })
+
+  useEffect(()=>{
+    if(authUser.state.id){
+      navigate('/')
+    }
   })
 
   return (
