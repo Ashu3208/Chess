@@ -15,24 +15,19 @@ export default function Navbar() {
     console.log(authUser)
     const navigate = useNavigate();
 
-    const [NewGamePopupOpen, setNewGamePopup] = useState(false);
-    const [JoinGamePopupOpen, setJoinGamePopup] = useState(false);
+    const [isNewGameOpen, setIsNewGameOpen] = useState(false);
+    const [isJoinGameOpen, setIsJoinGameOpen] = useState(false);
 
     const logout = async () => {
         console.log("removing")
         cookies.remove("TOKEN", { path: '/' });
-        navigate("/")
-        navigate(0);
+        navigate(0)
     };
 
-    const toggleNewGamePopup = () => {
-        NewGamePopupOpen == true ? setNewGamePopup(false) :
-            setNewGamePopup(true);
-    };
 
-    const toggleJoinGamePopup = () => {
-        JoinGamePopupOpen == true ? setJoinGamePopup(false) :
-            setJoinGamePopup(true);
+    const setPopupValue = (newGameValue, joinGameValue) => {
+        setIsNewGameOpen(newGameValue);
+        setIsJoinGameOpen(joinGameValue);
     };
 
     return (
@@ -45,21 +40,27 @@ export default function Navbar() {
                         <img src={logo} alt="Chess Logo" style={{ height: 40 }} />
                     </IconButton>
                     <Box sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography component={Link} to='/play' sx={{ textDecoration: 'none', color: '#508D4E' }}>
-                            Play
-                        </Typography>
                         {authUser.state.id ? (
-                            <Button onClick={logout} variant="contained">Logout</Button>)
-                            : (<>
-                                <Typography component={Link} to='/login' sx={{ textDecoration: 'none', color: '#508D4E' }}>
-                                    Login
+                            <>
+                                <Typography component={Link} to='/play' sx={{ textDecoration: 'none', color: '#508D4E' }}>
+                                    Play
                                 </Typography>
-                                <Button onClick={toggleNewGamePopup} variant="contained" > Play as a Guest </Button>
+                                <Button onClick={logout} variant="contained">Logout</Button>
+                            </>
+                        )
+                            : (<>
+                                <Link to='/login' className="text-green-400 text-sm font-bold border-2 border-green rounded-md p-1">
+                                    Login
+                                </Link>
+                                <Link to='/register' className="text-amber-400 text-sm font-bold border-2 border-green rounded-md p-1">
+                                    Sign Up
+                                </Link>
+                                <Button onClick={() => setPopupValue(true, false)} variant="contained" > Play as a Guest </Button>
                             </>)}
 
                     </Box>
-                    <NewGamePopup open={NewGamePopupOpen} toggleNewGamePopup={toggleNewGamePopup} toggleJoinGamePopup={toggleJoinGamePopup} />
-                    <JoinGamePopup open={JoinGamePopupOpen} toggleNewGamePopup={toggleNewGamePopup} toggleJoinGamePopup={toggleJoinGamePopup} />
+                    <NewGamePopup open={isNewGameOpen} setPopupValue={setPopupValue} />
+                    <JoinGamePopup open={isJoinGameOpen} setPopupValue={setPopupValue} />
                 </Toolbar>
             </Appbar>
         </>
