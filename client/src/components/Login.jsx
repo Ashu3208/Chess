@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Button, TextField, createTheme, ThemeProvider, Box, Paper, Typography } from "@mui/material";
+import { Button, TextField, createTheme, ThemeProvider, Box, Paper, Typography, InputAdornment, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
 import Cookies from "universal-cookie";
@@ -44,8 +44,8 @@ export default function Login() {
         main: '#58a6ff',
       },
       background: {
-        default: '#0d1117',
-        paper: '#161b22',
+        default: '#05070f',
+        paper: 'rgba(20, 26, 38, 0.9)',
       },
     },
     components: {
@@ -88,19 +88,30 @@ export default function Login() {
     <ThemeProvider theme={theme}>
       <Box
         sx={{
+          position: 'relative',
           minHeight: 'calc(100vh - 64px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          pt: '96px', // keep content below navbar
+          pt: '96px',
           pb: 4,
           px: 2,
-          bgcolor: 'background.default',
+          bgcolor: 'radial-gradient(circle at 20% 20%, rgba(88,166,255,0.08), transparent 25%), radial-gradient(circle at 80% 0%, rgba(88,166,255,0.06), transparent 22%), #05070f',
         }}
       >
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            backdropFilter: 'blur(2px)',
+            pointerEvents: 'none',
+            opacity: 0.6,
+          }}
+        />
         <Paper
           elevation={6}
           sx={{
+            position: 'relative',
             width: '100%',
             maxWidth: 420,
             p: 4,
@@ -108,12 +119,20 @@ export default function Login() {
             flexDirection: 'column',
             gap: 2.5,
             bgcolor: 'background.paper',
-            border: '1px solid #30363d',
+            border: '1px solid rgba(88,166,255,0.18)',
+            boxShadow: '0 20px 45px rgba(0,0,0,0.35)',
+            backdropFilter: 'blur(16px)',
+            borderRadius: 3,
           }}
         >
-          <Typography variant="h5" fontWeight={700} textAlign="center">
-            Login to Chess
-          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center', textAlign: 'center' }}>
+            <Typography variant="h5" fontWeight={800}>
+              Login to Chess
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Welcome back! Enter your details to continue your match.
+            </Typography>
+          </Box>
           <form
             onSubmit={handleSubmit}
             style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
@@ -126,6 +145,13 @@ export default function Login() {
               onChange={handleChange}
               fullWidth
               required
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start" sx={{ color: '#8b949e' }}>
+                    @
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               label="Password"
@@ -141,6 +167,7 @@ export default function Login() {
               Sign In
             </Button>
           </form>
+          <Divider flexItem sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
           <Button variant="outlined" fullWidth onClick={() => navigate('/register')}>
             New? Sign Up
           </Button>
