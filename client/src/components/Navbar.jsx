@@ -1,8 +1,7 @@
 import { Button, Toolbar, Typography, Box, IconButton } from "@mui/material";
 import React, { useState, useContext } from "react";
 import { Link, useNavigate, } from "react-router-dom";
-import NewGamePopup from "./NewGamePopup";
-import JoinGamePopup from "./JoinGamePopup";
+import GamePopup from "./GamePopup";
 import Appbar from "@mui/material/AppBar"
 import logo from "../assets/chess-navbar.png";
 import Chesslogo from "/chess.png"
@@ -12,23 +11,16 @@ const cookies = new Cookies();
 
 export default function Navbar() {
     const authUser = useContext(UserContext)
-    console.log(authUser)
     const navigate = useNavigate();
 
-    const [isNewGameOpen, setIsNewGameOpen] = useState(false);
-    const [isJoinGameOpen, setIsJoinGameOpen] = useState(false);
+    const [isGamePopupOpen, setIsGamePopupOpen] = useState(false);
 
     const logout = async () => {
-        console.log("removing")
         cookies.remove("TOKEN", { path: '/' });
         navigate(0)
     };
 
-
-    const setPopupValue = (newGameValue, joinGameValue) => {
-        setIsNewGameOpen(newGameValue);
-        setIsJoinGameOpen(joinGameValue);
-    };
+    const toggleGamePopup = (value) => setIsGamePopupOpen(value);
 
     return (
         <>
@@ -55,12 +47,11 @@ export default function Navbar() {
                                 <Link to='/register' className="text-amber-400 text-sm font-bold border-2 border-green rounded-md p-1">
                                     Sign Up
                                 </Link>
-                                <Button onClick={() => setPopupValue(true, false)} variant="contained" > Play as a Guest </Button>
+                                <Button onClick={() => toggleGamePopup(true)} variant="contained" > Play as a Guest </Button>
                             </>)}
 
                     </Box>
-                    <NewGamePopup open={isNewGameOpen} setPopupValue={setPopupValue} />
-                    <JoinGamePopup open={isJoinGameOpen} setPopupValue={setPopupValue} />
+                    <GamePopup open={isGamePopupOpen} onClose={() => toggleGamePopup(false)} />
                 </Toolbar>
             </Appbar>
         </>
