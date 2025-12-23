@@ -63,3 +63,24 @@ exports.login = async(req,res) =>{
         res.status(403).json({ error: err });
       }
 }
+
+// Simple placeholder forgot-password handler (no email sending yet)
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ msg: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      // Do not reveal whether user exists in a real app; here we just return generic message
+      return res.status(200).json({ msg: "If an account exists for this email, a reset link will be sent." });
+    }
+
+    // Placeholder for generating and emailing a reset token.
+    return res.status(200).json({ msg: "If an account exists for this email, a reset link will be sent." });
+  } catch (err) {
+    return res.status(500).json({ error: err.message || "Server error" });
+  }
+}
