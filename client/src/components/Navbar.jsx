@@ -40,24 +40,21 @@ export default function Navbar() {
             <Appbar
                 className="navbar1">
                 <Toolbar variant="regular" sx={{ backgroundColor: "#100F0F" }} >
-                    <IconButton edge="start" color="inherit" aria-label="logo" sx={{ '&:hover': { backgroundColor: 'transparent' }, '&:focus': { outline: 'none' } }}>
+                    <IconButton edge="start" component={Link} to='/' color="inherit" aria-label="logo" sx={{ '&:hover': { backgroundColor: 'transparent' }, '&:focus': { outline: 'none' } }}>
                         <img src={Chesslogo} alt="Chess Logo" style={{ height: 40 }} />
                         <img src={logo} alt="Chess Logo" style={{ height: 40 }} />
                     </IconButton>
                     <Box sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography component={Link} to='/' sx={{ textDecoration: 'none', color: '#508D4E' }}>
-                            Home
-                        </Typography>
                         <Typography component={Link} to='/play' sx={{ textDecoration: 'none', color: '#508D4E' }}>
                             Play
                         </Typography>
                         {authUser.state.id ? (
                             <Button onClick={logout} variant="contained">Logout</Button>)
-                            :(<>
-                                    <Typography component={Link} to='/login' sx={{ textDecoration: 'none', color: '#508D4E' }}>
-                                        Login
-                                    </Typography>
-                                    <Button onClick={toggleNewGamePopup} variant="contained" > Play as a Guest </Button>
+                            : (<>
+                                <Typography component={Link} to='/login' sx={{ textDecoration: 'none', color: '#508D4E' }}>
+                                    Login
+                                </Typography>
+                                <Button onClick={toggleNewGamePopup} variant="contained" > Play as a Guest </Button>
                             </>)}
 
                     </Box>
