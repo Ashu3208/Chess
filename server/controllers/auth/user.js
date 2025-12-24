@@ -24,8 +24,19 @@ exports.register = async(req,res) =>{
     
         const registered = await newUser.save();
         if (registered) {
-          const token = await newUser.generateAuthToken();
-          res.status(201).json({username,email,token});
+          // Generate both access and refresh tokens
+          const accessToken = newUser.generateAccessToken();
+          const refreshToken = newUser.generateRefreshToken();
+          
+          // Store refresh token in database
+          await newUser.addRefreshToken(refreshToken);
+          
+          res.status(201).json({
+            username,
+            email,
+            accessToken,
+            refreshToken
+          });
         } else {
           res.status(400).json({ error: "Registration Failed" });
         }
@@ -38,31 +49,109 @@ exports.register = async(req,res) =>{
 exports.login = async(req,res) =>{
     try {
         const {email, password } = req.body;
-        console.log(req.body)
         if (!email || !password) {
           return res.status(400).json({ msg: "Invalid data" });
         }
     
         const user = await User.findOne({ email: email });
-        console.log(user);
-        if (user) {
-          const match = await bcrypt.compare(password, user.password);
-            
-          const token = await user.generateAuthToken();
-          console.log(token);
-            
-          if (!match) {
-            res.status(410).json({ msg: "Invalid username or password" });
-          } else {
-            res.status(200).send({ msg: "Success!", token });
-          }
-        } else {
-          res.status(401).json({ msg: "Invalid username or password" });
+        if (!user) {
+          return res.status(401).json({ msg: "Invalid username or password" });
         }
+        
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+          return res.status(401).json({ msg: "Invalid username or password" });
+        }
+        
+        // Generate both access and refresh tokens
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+        
+        // Store refresh token in database
+        await user.addRefreshToken(refreshToken);
+        
+        res.status(200).json({ 
+          msg: "Success!", 
+          accessToken,
+          refreshToken
+        });
       } catch (err) {
-        res.status(403).json({ error: err });
+        res.status(500).json({ error: err.message || "Server error" });
       }
 }
+
+// Refresh token endpoint - generates new access token using refresh token
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    
+    if (!refreshToken) {
+      return res.status(400).json({ msg: "Refresh token is required" });
+    }
+
+    // Verify refresh token
+    const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + '_refresh';
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
+    } catch (err) {
+      return res.status(401).json({ msg: "Invalid or expired refresh token" });
+    }
+
+    // Find user and verify refresh token is in their token list
+    const user = await User.findOne({ _id: decoded._id });
+    if (!user) {
+      return res.status(401).json({ msg: "User not found" });
+    }
+
+    if (!user.refreshTokens.includes(refreshToken)) {
+      // Token was revoked (logout, security breach, etc.)
+      return res.status(401).json({ msg: "Refresh token has been revoked" });
+    }
+
+    // Generate new access token
+    const newAccessToken = user.generateAccessToken();
+
+    res.status(200).json({
+      accessToken: newAccessToken
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Server error" });
+  }
+};
+
+// Logout endpoint - revokes refresh token
+exports.logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    
+    if (!refreshToken) {
+      return res.status(400).json({ msg: "Refresh token is required" });
+    }
+
+    // Verify and decode refresh token to get user ID
+    const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + '_refresh';
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
+    } catch (err) {
+      // Token might be expired, but we still want to clear it if it exists
+      decoded = jwt.decode(refreshToken);
+      if (!decoded) {
+        return res.status(400).json({ msg: "Invalid refresh token" });
+      }
+    }
+
+    const user = await User.findOne({ _id: decoded._id });
+    if (user) {
+      await user.removeRefreshToken(refreshToken);
+    }
+
+    res.status(200).json({ msg: "Logged out successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Server error" });
+  }
+};
 
 // Simple placeholder forgot-password handler (no email sending yet)
 exports.forgotPassword = async (req, res) => {

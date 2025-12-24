@@ -31,7 +31,13 @@ export default function Register() {
       const res = await axios.post(uri, { username, email, password });
 
       if (res.status === 201) {
-        cookies.set("TOKEN", res.data.token, { path: '/' })
+        const { accessToken, refreshToken } = res.data;
+        
+        // Store both tokens in cookies
+        cookies.set("ACCESS_TOKEN", accessToken, { path: '/' });
+        cookies.set("REFRESH_TOKEN", refreshToken, { path: '/' });
+        
+        // Get current user info
         authUser.getCurrUser();
         navigate('/')
       } else {

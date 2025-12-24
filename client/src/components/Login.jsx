@@ -31,7 +31,13 @@ export default function Login() {
       const response = await axios.post(uri, { email, password });
 
       if (response.status === 200) {
-        cookies.set("TOKEN", response.data.token, { path: '/' })
+        const { accessToken, refreshToken } = response.data;
+        
+        // Store both tokens in cookies
+        cookies.set("ACCESS_TOKEN", accessToken, { path: '/' });
+        cookies.set("REFRESH_TOKEN", refreshToken, { path: '/' });
+        
+        // Get current user info
         authUser.getCurrUser();
         navigate("/")
       }

@@ -10,10 +10,14 @@ router.get('/', (req, res) => {
     res.send('User endpoint')
 })
 
-//Post Routes
-
+// Public routes
 router.post('/register', authController.register)
 router.post('/login', authController.login)
 router.post('/forgot-password', authController.forgotPassword)
-router.get('/valid',authMiddleware,(req,res)=>res.send(req.user))
+router.post('/refresh-token', authController.refreshToken)
+router.post('/logout', authController.logout)
+
+// Protected routes
+router.get('/valid', authMiddleware, (req, res) => res.send(req.user))
+
 module.exports = router
