@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Button, TextField, ThemeProvider, createTheme, Box, Paper, Typography, InputAdornment, Divider } from "@mui/material";
+import { Button, TextField, ThemeProvider, createTheme, Box, Paper, Typography, InputAdornment, Divider, Alert } from "@mui/material";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
@@ -12,6 +12,8 @@ export default function Register() {
   const cookies = new Cookies()
 
   const [userDetails, setUserDetails] = useState({ email: "", password: "", username: "" })
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setUserDetails({ ...userDetails, [e.target.name]: e.target.value })
@@ -21,25 +23,32 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const uri = `${import.meta.env.VITE_SERVER_URI}/user/register`
-    const { username, email, password } = userDetails
-    const res = await axios.post(
-      uri,
-      {
-        username, email, password
+    setError("");
+    setSubmitting(true);
+    try {
+      const uri = `${import.meta.env.VITE_SERVER_URI}/user/register`
+      const { username, email, password } = userDetails
+      const res = await axios.post(uri, { username, email, password });
+
+      if (res.status === 201) {
+        const { accessToken, refreshToken } = res.data;
+        
+        // Store both tokens in cookies
+        cookies.set("ACCESS_TOKEN", accessToken, { path: '/' });
+        cookies.set("REFRESH_TOKEN", refreshToken, { path: '/' });
+        
+        // Get current user info
+        authUser.getCurrUser();
+        navigate('/')
+      } else {
+        setError(res.data?.msg || res.data?.error || "Registration failed. Please try again.");
       }
-    )
-    if (res.status == 201) {
-      cookies.set("TOKEN", res.data.token, { path: '/' })
-      authUser.getCurrUser();
-      navigate('/')
-      // navigate(0)
-
-    } else {
-      console.log(res.data)
+    } catch (err) {
+      const apiMessage = err?.response?.data?.msg || err?.response?.data?.error;
+      setError(apiMessage || "Registration failed. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-
-
   };
 
   const theme = createTheme({
@@ -172,7 +181,8 @@ export default function Register() {
               required
               autoComplete="new-password"
             />
-            <Button type="submit" variant="contained" size="large" fullWidth>
+            {error && <Alert severity="error">{error}</Alert>}
+            <Button type="submit" variant="contained" size="large" fullWidth disabled={submitting}>
               Create Account
             </Button>
           </form>

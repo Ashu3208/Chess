@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Button, TextField, createTheme, ThemeProvider, Box, Paper, Typography, InputAdornment, Divider } from "@mui/material";
+import { Button, TextField, createTheme, ThemeProvider, Box, Paper, Typography, InputAdornment, Divider, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
 import Cookies from "universal-cookie";
@@ -12,29 +12,63 @@ export default function Login() {
   const authUser = useContext(UserContext)
 
   const [userDetails, setUserDetails] = useState({ email: "", password: "" })
+  const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const handleChange = (e) => {
     setUserDetails({ ...userDetails, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const uri = `${import.meta.env.VITE_SERVER_URI}/user/login`
-    const { email, password } = userDetails
-    axios.post(
-      uri,
-      {
-        email, password
-      }
-    )
-      .then((response) => {
-        if (response.status == 200) {
-          cookies.set("TOKEN", response.data.token, { path: '/' })
-          authUser.getCurrUser();
-          navigate("/")
-        }
+    setError("");
+    setInfo("");
+    setSubmitting(true);
+    try {
+      const uri = `${import.meta.env.VITE_SERVER_URI}/user/login`
+      const { email, password } = userDetails
+      const response = await axios.post(uri, { email, password });
 
-      })
-      .catch((error) => { console.log(error) })
+      if (response.status === 200) {
+        const { accessToken, refreshToken } = response.data;
+        
+        // Store both tokens in cookies
+        cookies.set("ACCESS_TOKEN", accessToken, { path: '/' });
+        cookies.set("REFRESH_TOKEN", refreshToken, { path: '/' });
+        
+        // Get current user info
+        authUser.getCurrUser();
+        navigate("/")
+      }
+    } catch (err) {
+      const apiMessage = err?.response?.data?.msg || err?.response?.data?.error;
+      setError(apiMessage || "Login failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setError("");
+    setInfo("");
+    if (!userDetails.email) {
+      setError("Please enter your email first to reset your password.");
+      return;
+    }
+    setForgotSubmitting(true);
+    try {
+      const uri = `${import.meta.env.VITE_SERVER_URI}/user/forgot-password`;
+      const { email } = userDetails;
+      const res = await axios.post(uri, { email });
+      const apiMessage = res?.data?.msg || "If an account exists for this email, a reset link will be sent.";
+      setInfo(apiMessage);
+    } catch (err) {
+      const apiMessage = err?.response?.data?.msg || err?.response?.data?.error;
+      setError(apiMessage || "Could not start password reset. Please try again.");
+    } finally {
+      setForgotSubmitting(false);
+    }
   };
 
   const theme = createTheme({
@@ -163,14 +197,27 @@ export default function Login() {
               fullWidth
               required
             />
-            <Button type="submit" variant="contained" size="large" fullWidth>
+            {error && <Alert severity="error">{error}</Alert>}
+            {info && <Alert severity="info">{info}</Alert>}
+            <Button type="submit" variant="contained" size="large" fullWidth disabled={submitting}>
               Sign In
             </Button>
           </form>
           <Divider flexItem sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
-          <Button variant="outlined" fullWidth onClick={() => navigate('/register')}>
-            New? Sign Up
-          </Button>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Button
+              variant="text"
+              size="small"
+              onClick={handleForgotPassword}
+              disabled={forgotSubmitting}
+              sx={{ alignSelf: 'flex-start', textTransform: 'none', px: 0 }}
+            >
+              Forgot password?
+            </Button>
+            <Button variant="outlined" fullWidth onClick={() => navigate('/register')}>
+              New? Sign Up
+            </Button>
+          </Box>
         </Paper>
       </Box>
     </ThemeProvider>

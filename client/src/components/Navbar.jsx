@@ -6,8 +6,6 @@ import Appbar from "@mui/material/AppBar"
 import logo from "../assets/chess-navbar.png";
 import Chesslogo from "/chess.png"
 import UserContext from "../context/user"
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
 
 export default function Navbar() {
     const authUser = useContext(UserContext)
@@ -15,9 +13,11 @@ export default function Navbar() {
 
     const [isGamePopupOpen, setIsGamePopupOpen] = useState(false);
 
-    const logout = async () => {
-        cookies.remove("TOKEN", { path: '/' });
-        navigate(0)
+    const handleLogout = async () => {
+        if (authUser.logout) {
+            await authUser.logout();
+        }
+        navigate(0); // Refresh page to clear state
     };
 
     const toggleGamePopup = (value) => setIsGamePopupOpen(value);
@@ -37,7 +37,7 @@ export default function Navbar() {
                                 <Typography component={Link} to='/play' sx={{ textDecoration: 'none', color: '#508D4E' }}>
                                     Play
                                 </Typography>
-                                <Button onClick={logout} variant="contained">Logout</Button>
+                                <Button onClick={handleLogout} variant="contained">Logout</Button>
                             </>
                         )
                             : (<>
