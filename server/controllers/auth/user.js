@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken");
 const User = require("../../database/models/user");
+const sendMail = require("../../utils/mailer")
 
 exports.register = async(req,res) =>{
     try {
