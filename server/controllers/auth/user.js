@@ -221,8 +221,8 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ msg: "email, token and newPassword are required" });
     }
 
-    if (typeof newPassword !== "string" || newPassword.length < 6) {
-      return res.status(400).json({ msg: "Password must be at least 6 characters" });
+    if (typeof newPassword !== "string" || newPassword.length < 8) {
+      return res.status(400).json({ msg: "Password must be at least 8 characters" });
     }
 
     const user = await User.findOne({ email });
@@ -235,7 +235,10 @@ exports.resetPassword = async (req, res) => {
     }
 
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    if (tokenHash !== user.passwordResetTokenHash) {
+    const expectedHash = Buffer.from(user.passwordResetTokenHash, 'hex');
+    const actualHash = Buffer.from(tokenHash, 'hex');
+
+    if (expectedHash.length !== actualHash.length || !crypto.timingSafeEqual(expectedHash, actualHash)) {
       return res.status(400).json({ msg: "Invalid or expired reset token" });
     }
 
