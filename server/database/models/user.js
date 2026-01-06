@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const jwt= require("jsonwebtoken")
 require('dotenv').config()
 
+
 const UserSchema = mongoose.Schema({
     email: {
         type:String,
@@ -79,10 +80,15 @@ UserSchema.methods.clearAllRefreshTokens = async function () {
 UserSchema.methods.generateAuthToken = async function () {
     try {
         return this.generateAccessToken();
+        return this.generateAccessToken();
     } catch (err) {
         console.log(err);
         throw err;
+        console.log(err);
+        throw err;
     }
+};
+
 };
 
 module.exports = mongoose.model.Users || mongoose.model("Users", UserSchema);

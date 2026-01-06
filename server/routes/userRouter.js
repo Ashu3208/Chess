@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
 })
 
 // Public routes
+// Public routes
 router.post('/register', authController.register)
 router.post('/login', authController.login)
 router.post('/forgot-password', authController.forgotPassword)

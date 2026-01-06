@@ -82,6 +82,27 @@ exports.login = async(req,res) =>{
           accessToken,
           refreshToken
         });
+        if (!user) {
+          return res.status(401).json({ msg: "Invalid username or password" });
+        }
+        
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+          return res.status(401).json({ msg: "Invalid username or password" });
+        }
+        
+        // Generate both access and refresh tokens
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+        
+        // Store refresh token in database
+        await user.addRefreshToken(refreshToken);
+        
+        res.status(200).json({ 
+          msg: "Success!", 
+          accessToken,
+          refreshToken
+        });
       } catch (err) {
         res.status(500).json({ error: err.message || "Server error" });
       }
