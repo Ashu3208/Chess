@@ -6,6 +6,7 @@ import Register from './components/Register'
 import Login from './components/Login'
 import Play from './components/Play'
 import Layout from './components/Layout'
+import ResetPassword from './components/ResetPassword'
 
 function App() {
   
@@ -25,6 +26,10 @@ function App() {
         {
           path:'/login',
           element: <Login />
+        },
+        {
+          path:'/reset-password',
+          element: <ResetPassword />
         },
         {
           path:'/game/:roomUrl',
