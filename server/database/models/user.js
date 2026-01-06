@@ -89,6 +89,4 @@ UserSchema.methods.generateAuthToken = async function () {
     }
 };
 
-};
-
 module.exports = mongoose.model.Users || mongoose.model("Users", UserSchema);
