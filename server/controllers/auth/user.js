@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const User = require("../../database/models/user");
-const sendMail = require("../../utils/mailer")
+const { sendWelcomeEmail, sendPasswordResetEmail } = require("../../utils/mailer")
 
 exports.register = async(req,res) =>{
     try {
@@ -25,6 +26,11 @@ exports.register = async(req,res) =>{
     
         const registered = await newUser.save();
         if (registered) {
+          // Fire-and-forget welcome email (don't fail registration if SMTP fails)
+          sendWelcomeEmail({ to: email, username }).catch((err) => {
+            console.error("Welcome email failed:", err.message || err);
+          });
+
           // Generate both access and refresh tokens
           const accessToken = newUser.generateAccessToken();
           const refreshToken = newUser.generateRefreshToken();
@@ -163,14 +169,82 @@ exports.forgotPassword = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    if (!user) {
-      // Do not reveal whether user exists in a real app; here we just return generic message
-      return res.status(200).json({ msg: "If an account exists for this email, a reset link will be sent." });
-    }
+    // Always return generic message to avoid user enumeration
+    const generic = { msg: "If an account exists for this email, a reset link will be sent." };
 
-    // Placeholder for generating and emailing a reset token.
-    return res.status(200).json({ msg: "If an account exists for this email, a reset link will be sent." });
+    if (!user) return res.status(200).json(generic);
+
+    // Create reset token (store only hash in DB)
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+
+    const minutesValid = Number(process.env.PASSWORD_RESET_MINUTES || 60);
+    user.passwordResetTokenHash = tokenHash;
+    user.passwordResetTokenExpiresAt = new Date(Date.now() + minutesValid * 60 * 1000);
+    await user.save();
+
+    const clientBaseUrl =
+      process.env.CLIENT_URL ||
+      req.headers.origin ||
+      "http://localhost:5173";
+
+    const resetUrl = `${clientBaseUrl.replace(/\/$/, "")}/reset-password?token=${encodeURIComponent(
+      rawToken
+    )}&email=${encodeURIComponent(email)}`;
+
+    // Fire-and-forget to keep response fast and avoid leaking SMTP issues
+    sendPasswordResetEmail({
+      to: email,
+      username: user.username,
+      resetUrl,
+      minutesValid,
+    }).catch((err) => {
+      console.error("Password reset email failed:", err.message || err);
+    });
+
+    return res.status(200).json(generic);
   } catch (err) {
     return res.status(500).json({ error: err.message || "Server error" });
   }
-}
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, token, newPassword } = req.body;
+
+    if (!email || !token || !newPassword) {
+      return res.status(400).json({ msg: "email, token and newPassword are required" });
+    }
+
+    if (typeof newPassword !== "string" || newPassword.length < 6) {
+      return res.status(400).json({ msg: "Password must be at least 6 characters" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user || !user.passwordResetTokenHash || !user.passwordResetTokenExpiresAt) {
+      return res.status(400).json({ msg: "Invalid or expired reset token" });
+    }
+
+    if (user.passwordResetTokenExpiresAt.getTime() < Date.now()) {
+      return res.status(400).json({ msg: "Invalid or expired reset token" });
+    }
+
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    if (tokenHash !== user.passwordResetTokenHash) {
+      return res.status(400).json({ msg: "Invalid or expired reset token" });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.passwordResetTokenHash = null;
+    user.passwordResetTokenExpiresAt = null;
+
+    // Security: revoke all refresh tokens after password change
+    user.refreshTokens = [];
+
+    await user.save();
+
+    return res.status(200).json({ msg: "Password reset successful" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message || "Server error" });
+  }
+};
