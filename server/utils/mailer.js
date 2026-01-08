@@ -1,12 +1,50 @@
 const nodemailer = require("nodemailer");
 
 function createTransporter() {
-  // For Gmail App Password auth, host/port are optional; nodemailer will infer via `service`.
-  // If you want custom SMTP, set SMTP_HOST/SMTP_PORT and remove `service`.
+  const host = process.env.SMTP_HOST;
+  const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
+  const service = process.env.SMTP_SERVICE; // optional
+  const forceIpv4 = String(process.env.SMTP_FORCE_IPV4 || "").toLowerCase() === "true";
+  const family = process.env.SMTP_FAMILY ? Number(process.env.SMTP_FAMILY) : forceIpv4 ? 4 : undefined;
+  const connectionTimeout =
+    process.env.SMTP_CONNECTION_TIMEOUT_MS ? Number(process.env.SMTP_CONNECTION_TIMEOUT_MS) : undefined;
+  const greetingTimeout =
+    process.env.SMTP_GREETING_TIMEOUT_MS ? Number(process.env.SMTP_GREETING_TIMEOUT_MS) : undefined;
+  const socketTimeout = process.env.SMTP_SOCKET_TIMEOUT_MS ? Number(process.env.SMTP_SOCKET_TIMEOUT_MS) : undefined;
+
+  // If user sets SMTP_HOST/SMTP_PORT, we use explicit SMTP config.
+  // Otherwise we fall back to a `service` transport (default: gmail).
+  if (host || port) {
+    const resolvedPort = port || 587;
+    const secure =
+      String(process.env.SMTP_SECURE || "").toLowerCase() === "true" ||
+      resolvedPort === 465; // implicit TLS for 465
+
+    return nodemailer.createTransport({
+      host: host || "smtp.gmail.com",
+      port: resolvedPort,
+      secure,
+      ...(family ? { family } : {}),
+      ...(connectionTimeout ? { connectionTimeout } : {}),
+      ...(greetingTimeout ? { greetingTimeout } : {}),
+      ...(socketTimeout ? { socketTimeout } : {}),
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+      // Render/Gmail should support TLSv1.2+. Keep defaults strict.
+      tls: {
+        minVersion: "TLSv1.2",
+      },
+    });
+  }
+
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined,
-    service: process.env.SMTP_SERVICE || "gmail",
+    service: service || "gmail",
+    ...(family ? { family } : {}),
+    ...(connectionTimeout ? { connectionTimeout } : {}),
+    ...(greetingTimeout ? { greetingTimeout } : {}),
+    ...(socketTimeout ? { socketTimeout } : {}),
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.GMAIL_APP_PASSWORD,
@@ -14,7 +52,29 @@ function createTransporter() {
   });
 }
 
-const transporter = createTransporter();
+let _transporter;
+let _verifyPromise;
+
+function getTransporter() {
+  if (!_transporter) _transporter = createTransporter();
+  return _transporter;
+}
+
+async function verifyTransporterOnce() {
+  if (process.env.NODE_ENV === "test") return;
+  if (!_verifyPromise) {
+    _verifyPromise = getTransporter()
+      .verify()
+      .then(() => {
+        console.log("SMTP transporter verified");
+      })
+      .catch((err) => {
+        console.error("SMTP transporter verify failed:", err && (err.message || err));
+        throw err;
+      });
+  }
+  return _verifyPromise;
+}
 
 function requireEnv(name) {
   const v = process.env[name];
@@ -81,18 +141,32 @@ async function sendMail({ to, subject, text, html }) {
   requireEnv("EMAIL_USER");
   requireEnv("GMAIL_APP_PASSWORD");
 
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-    to,
-    subject,
-    text,
-    html,
-  });
+  try {
+    await verifyTransporterOnce();
+    const info = await getTransporter().sendMail({
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to,
+      subject,
+      text,
+      html,
+    });
 
-  if (process.env.NODE_ENV !== "test") {
-    console.log("Email sent:", { to, subject, messageId: info.messageId });
+    if (process.env.NODE_ENV !== "test") {
+      console.log("Email sent:", { to, subject, messageId: info.messageId });
+    }
+    return info;
+  } catch (err) {
+    // Make logs actionable in Render by surfacing common nodemailer error fields.
+    const details = {
+      message: err && err.message,
+      code: err && err.code,
+      response: err && err.response,
+      responseCode: err && err.responseCode,
+      command: err && err.command,
+    };
+    console.error("sendMail failed:", details);
+    throw err;
   }
-  return info;
 }
 
 function buildWelcomeEmail({ username }) {

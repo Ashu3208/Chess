@@ -190,7 +190,6 @@ exports.forgotPassword = async (req, res) => {
 
     const clientBaseUrl =
       process.env.CLIENT_URL ||
-      req.headers.origin ||
       "http://localhost:5173";
 
     const resetUrl = `${clientBaseUrl.replace(/\/$/, "")}/reset-password?token=${encodeURIComponent(
