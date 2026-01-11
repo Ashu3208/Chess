@@ -1,0 +1,33 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chess-api
+    restart: unless-stopped
+    environment:
+      # App
+      SERVER_PORT: ${SERVER_PORT:-3000}
+
+      # MongoDB Atlas (required)
+      DB_URI: ${DB_URI}
+
+      # Auth (required)
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-}
+
+      # Password reset email UX (optional)
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:5173}
+
+      # SMTP (optional; only required if you use email features)
+      EMAIL_USER: ${EMAIL_USER:-}
+      GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_SERVICE: ${SMTP_SERVICE:-}
+      SMTP_SECURE: ${SMTP_SECURE:-}
+    ports:
+      - "${SERVER_PORT:-3000}:${SERVER_PORT:-3000}"
+
+

@@ -1,4 +1,12 @@
 {
+  "name": "chess-server",
+  "private": true,
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "dependencies": {
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
