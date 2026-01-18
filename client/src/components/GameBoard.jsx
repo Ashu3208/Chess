@@ -47,7 +47,7 @@ export default function GameBoard() {
           <div
             className={`square ${getColor(i)} `}
             key={i}
-            square-id={i}
+            data-square-id={i}
             onDragStart={handleDragStart}
             onDragOver={dragOver}
             onDrop={handleDragDrop}

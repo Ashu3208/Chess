@@ -1,60 +1,61 @@
-﻿# Chess (React + Node/Express + MongoDB + Socket.IO)
+﻿# Chess — Real-time Multiplayer Chess
 
-A full‑stack chess application. The client is built with React (Vite) and Material UI, and the server is an Express API with JWT auth, MongoDB (Mongoose), and Socket.IO for realtime move broadcasting.
-
+A full-stack real-time chess application.
+Frontend built with React (Vite), MUI, and Tailwind.
+Backend built with Node.js, Express, MongoDB, JWT authentication, and Socket.IO for realtime gameplay.
 
 ## Tech Stack
-    - React 18, Vite
-    - Material UI (MUI)
-    - Node.js, Express
-    - MongoDB, Mongoose
-    - JWT authentication
-    - Socket.IO
 
+- React 18, Vite
+- Material UI (MUI)
+- Tailwind CSS
+- Node.js, Express
+- MongoDB, Mongoose
+- JWT authentication
+- Socket.IO
 
 ## Monorepo Layout
-    - client/  → React frontend (Vite)
-    - server/  → Express API + Socket.IO + MongoDB
 
+- client/ → React frontend (Vite)
+- server/ → Express API + Socket.IO + MongoDB
 
 ## Prerequisites
-    - Node.js ≥ 18 and npm
-    - A MongoDB instance (local or Atlas)
 
+- Node.js ≥ 18 and npm
+- A MongoDB instance (local or Atlas)
 
 ## Quick Start
 
-1) Install dependencies
+1. Install dependencies
+   - In client/
+     npm install
 
-    - In client/
-        npm install
+   - In server/
+     npm install
 
-    - In server/
-        npm install
+2. Configure environment variables
+   - server/.env
+     DB_URI=mongodb://localhost:27017/chess
+     JWT_SECRET=replace_with_a_long_random_secret
+     SERVER_PORT=3000
 
-2) Configure environment variables
+   - client/.env
+     VITE_SERVER_URI=http://localhost:3000
 
-    - server/.env
-        DB_URI=mongodb://localhost:27017/chess
-        JWT_SECRET=replace_with_a_long_random_secret
-        SERVER_PORT=3000
+3. Run the servers
+   - Start API (from server/)
+     node index.js
 
-    - client/.env
-        VITE_SERVER_URI=http://localhost:3000
+     # or (recommended during development)
 
-3) Run the servers
+     npx nodemon index.js
 
-    - Start API (from server/)
-        node index.js
-        # or (recommended during development)
-        npx nodemon index.js
-
-    - Start client (from client/)
-        npm run dev
-        # Vite will print the local URL (typically http://localhost:5173)
-
+   - Start client (from client/)
+     npm run dev
+     # Vite will print the local URL (typically http://localhost:5173)
 
 ## API Overview (server)
+
 Base URL: `http://localhost:3000`
 
     - GET /user
@@ -82,23 +83,22 @@ Base URL: `http://localhost:3000`
         Body: { joinId }
         → 200 with { roomUrl } if valid; 400 otherwise.
 
-Notes
-    - CORS is open to all origins for development.
-    - Socket.IO is mounted on the same server for realtime move broadcasts.
-
+Notes - CORS is open to all origins for development. - Socket.IO is mounted on the same server for realtime move broadcasts.
 
 ## Client Environment
+
 The client expects `VITE_SERVER_URI` to point at the API (e.g., `http://localhost:3000`). Auth token is stored in a cookie named `TOKEN`. On login/register, the client calls `/user/login` and `/user/register`, then validates with `/user/valid`.
 
-
 ## Latest Changes
-    - Frontend tech stack migrated to React
-    - Incorporation of Material UI
 
+    - Dockerized the server
+    - Reset password
+    -
 
 ## Roadmap / ToDo
-- Show error on UI while login or register, if any
-- Add an eye icon for password, Empty fields not allowed in register and login page
+
+- Model Games and store them in db
+- Rewrite the game logic in react and avoid explicit DOM manipulation
 - Add loader for smooth transition
 - Add and Style the room Id modal and home page popup
 - Changes are reflected when pieces are moved but not captured.
@@ -108,5 +108,3 @@ The client expects `VITE_SERVER_URI` to point at the API (e.g., `http://localhos
 - Provide stats of games played
 - Add button to undo moves
 - Show moves played on the right hand side
-- Use Database for persistence
-
