@@ -26,7 +26,7 @@ export default function ChessBoard() {
       movable: {
         color: "white",
         free: false,
-        dests: getDests(game),
+        dests: getLegalDests(game),
       },
       events: { move: handleMove },
     });
@@ -35,12 +35,15 @@ export default function ChessBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function getDests(chess) {
-    const dests = {};
-    chess.moves({ verbose: true }).forEach((m) => {
-      if (!dests[m.from]) dests[m.from] = [];
-      dests[m.from].push(m.to);
+  function getLegalDests(chess) {
+    const moves = chess.moves({ verbose: true });
+    const dests = new Map();
+
+    moves.forEach((m) => {
+      if (!dests.has(m.from)) dests.set(m.from, []);
+      dests.get(m.from).push(m.to);
     });
+
     return dests;
   }
 
@@ -54,7 +57,7 @@ export default function ChessBoard() {
       position: updated.fen(),
       movable: {
         color: updated.turn() === "w" ? "white" : "black",
-        dests: getDests(updated),
+        dests: getLegalDests(updated),
       },
     });
   }

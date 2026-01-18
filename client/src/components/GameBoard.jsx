@@ -1,69 +1,83 @@
-import { useState, useEffect } from "react";
-import Piece from "./Pieces";
-import {
-  dragStart,
-  dragOver,
-  dragDrop,
-  startPieces,
-  getColor,
-} from "../utilities/moves";
-import "../styles.css";
+import { useEffect, useRef, useState } from "react";
+import { Chess } from "chess.js";
+import { Chessground } from "@lichess-org/chessground";
+
 export default function GameBoard() {
-  const [playerGo, setPlayerGo] = useState("white");
-  const [draggedElement, setDraggedElement] = useState(null);
-  const [startPositionId, setStartPositionId] = useState(null);
-  const [infoMessage, setInfoMessage] = useState("");
+  const boardRef = useRef(null);
+  const chessgroundRef = useRef(null);
 
-  const togglePlayer = (player) => {
-    setPlayerGo(player);
-  };
-
-  const handleDragStart = (e) => {
-    dragStart(e, setDraggedElement, setStartPositionId);
-  };
-
-  const handleDragDrop = (e) => {
-    dragDrop(
-      e,
-      draggedElement,
-      playerGo,
-      togglePlayer,
-      startPositionId,
-      setInfoMessage,
-    );
-  };
+  const [game, setGame] = useState(new Chess());
+  const [playerTurn, setPlayerTurn] = useState("white");
 
   useEffect(() => {
-    if (infoMessage) {
-      const timer = setTimeout(() => setInfoMessage(""), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [infoMessage]);
+    if (!boardRef.current) return;
+
+    chessgroundRef.current = Chessground(boardRef.current, {
+      position: game.fen(),
+      draggable: { enabled: true },
+      movable: {
+        free: false,
+        color: "white",
+        dests: getLegalDests(game),
+      },
+      events: { move: handleMove },
+    });
+
+    return () => chessgroundRef.current?.destroy();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Compute legal moves from chess.js
+  function getLegalDests(chess) {
+    const moves = chess.moves({ verbose: true });
+    const dests = new Map();
+
+    moves.forEach((m) => {
+      if (!dests.has(m.from)) dests.set(m.from, []);
+      dests.get(m.from).push(m.to);
+    });
+
+    return dests;
+  }
+
+  // When a piece is moved
+  function handleMove(from, to) {
+    console.log(game);
+    console.log(from);
+    console.log(to);
+    const updatedGame = new Chess(game.fen());
+    const move = updatedGame.move({ from, to, promotion: "q" });
+
+    if (!move) return;
+
+    setGame(updatedGame);
+
+    const nextTurn = updatedGame.turn() === "w" ? "white" : "black";
+    setPlayerTurn(nextTurn);
+
+    // Update board UI
+    chessgroundRef.current.set({
+      position: updatedGame.fen(),
+      movable: {
+        color: nextTurn,
+        dests: getLegalDests(updatedGame),
+      },
+    });
+  }
+
+  // Check for game end
+  const statusMessage = (() => {
+    if (game.isCheckmate())
+      return `Checkmate! ${playerTurn === "white" ? "Black" : "White"} wins`;
+    if (game.isDraw()) return "Draw!";
+    if (game.isCheck()) return `${playerTurn} is in check`;
+    return `Turn: ${playerTurn}`;
+  })();
 
   return (
-    <div className="w-auto bg-[#DBE7C9] rounded-xl pt-[5.4vh] px-20 pb-[2.6vh] m-2">
-      <div id="gameboard">
-        {startPieces.map((piece, i) => (
-          <div
-            className={`square ${getColor(i)} `}
-            key={i}
-            data-square-id={i}
-            onDragStart={handleDragStart}
-            onDragOver={dragOver}
-            onDrop={handleDragDrop}
-          >
-            {(i <= 15 || i >= 48) && (
-              <Piece piece={piece} color={i <= 15 ? "white" : "black"} />
-            )}
-          </div>
-        ))}
-      </div>
-      <div id="player-display">
-        <p>
-          It is <span id="player">{playerGo}</span>&apos;s turn{" "}
-        </p>
-      </div>
-      {infoMessage && <p id="info-display">{infoMessage}</p>}
+    <div className="flex flex-col items-center mt-6">
+      <div ref={boardRef} className="w-130 h-130" />
+      <p className="mt-4 text-white text-lg">{statusMessage}</p>
     </div>
   );
 }

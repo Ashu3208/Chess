@@ -10,6 +10,7 @@ import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 import "@lichess-org/chessground/assets/chessground.cburnett.css";
 import "@lichess-org/chessground/assets/chessground.cburnett.css";
+import './styles.css'
 
 function App() {
   const router = createBrowserRouter([
