@@ -1,59 +1,44 @@
-import React from 'react'
-import GameBoard from './components/GameBoard'
-import Home from './components/Home'
-import { createBrowserRouter,RouterProvider} from "react-router-dom"
-import Register from './components/Register'
-import Login from './components/Login'
-import Play from './components/Play'
-import Layout from './components/Layout'
-import ResetPassword from './components/ResetPassword'
+import GameBoard from "./components/GameBoard";
+import Home from "./components/Home";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Register from "./components/Register";
+import Login from "./components/Login";
+import Play from "./components/Play";
+import Layout from "./components/Layout";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
-  
   const router = createBrowserRouter([
     {
-      path:'/',
+      path: "/",
       element: <Layout />,
       children: [
+        { index: true, element: <Home /> },
+        { path: "register", element: <Register /> },
+        { path: "login", element: <Login /> },
+        { path: "reset-password", element: <ResetPassword /> },
         {
-          path:'/',
-          element: <Home />
-        },
-        {
-          path:'/register',
-          element: <Register />
-        },
-        {
-          path:'/login',
-          element: <Login />
-        },
-        {
-          path:'/reset-password',
-          element: <ResetPassword />
-        },
-        {
-          path:'/game/:roomUrl',
+          path: "game/:roomUrl",
           element: (
             <div className="container">
               <GameBoard />
             </div>
-          )
+          ),
         },
+        { path: "play", element: <Play /> },
         {
-          path:'/play',
-          element:<Play />
+          path: "*",
+          element: (
+            <p style={{ color: "white" }}>
+              You have been lost. Click <a href="/">here</a> to return.{" "}
+            </p>
+          ),
         },
-        {
-          path:'/*',
-          element:(<p style={{color:'white'}} >You have been lost. Click <a href='/'>here</a> to return. </p> )
-        }
-      ]
-    }
-  ])
+      ],
+    },
+  ]);
 
-  return (
-    <RouterProvider router={router} />
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
