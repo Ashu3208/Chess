@@ -14,15 +14,6 @@ body {
   padding: auto;
 }
 
-.container {
-    width: 80vh;
-    margin: 6.7vh auto 1.3vh;
-    padding: 5.4vh 3.3vh 2.6vh;
-    background-color: #DBE7C9;
-    border-radius: 1.3vh;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
 #gameboard {
     width: 75.5vh;
     height: 75.5vh;

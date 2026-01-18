@@ -17,14 +17,7 @@ function App() {
         { path: "register", element: <Register /> },
         { path: "login", element: <Login /> },
         { path: "reset-password", element: <ResetPassword /> },
-        {
-          path: "game/:roomUrl",
-          element: (
-            <div className="container">
-              <GameBoard />
-            </div>
-          ),
-        },
+        { path: "game/:roomUrl", element: <GameBoard /> },
         { path: "play", element: <Play /> },
         {
           path: "*",
