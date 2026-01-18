@@ -57,6 +57,24 @@ export default function Navbar() {
                 >
                   Play
                 </Typography>
+                <Typography
+                  component={Link}
+                  sx={{ textDecoration: "none", color: "#508D4E" }}
+                >
+                  LeaderBoard
+                </Typography>
+                <Typography
+                  component={Link}
+                  sx={{ textDecoration: "none", color: "#508D4E" }}
+                >
+                  GameHistory
+                </Typography>
+                <Typography
+                  component={Link}
+                  sx={{ textDecoration: "none", color: "#508D4E" }}
+                >
+                  Profile
+                </Typography>
                 <Button onClick={handleLogout} variant="contained">
                   Logout
                 </Button>

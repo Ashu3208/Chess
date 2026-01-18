@@ -1,6 +1,5 @@
-import React, {useContext, useEffect} from "react";
+import  {useContext, useEffect} from "react";
 import UserContext from "../context/user";
-import Login from "./Login";
 import { useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
 
@@ -13,7 +12,13 @@ export default function Play(){
         }
     })  
 
-    return(
-       <Typography variant="h1" sx={{color:"white"}}>In development</Typography>
+  return (
+      <div className="flex flex-1 text-white">
+      <div>Profile</div>
+      <div>Gameboard</div>
+      <div>
+        New Game
+      </div>
+      </div>
     )
 }
