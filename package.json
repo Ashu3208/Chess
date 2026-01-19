@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@lichess-org/chessground": "^9.9.0",
-    "chess.js": "^1.4.0"
-  }
-}
