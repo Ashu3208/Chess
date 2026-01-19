@@ -83,25 +83,22 @@ Base URL: `http://localhost:3000`
         Body: { joinId }
         → 200 with { roomUrl } if valid; 400 otherwise.
 
-Notes - CORS is open to all origins for development. - Socket.IO is mounted on the same server for realtime move broadcasts.
-
 ## Client Environment
 
 The client expects `VITE_SERVER_URI` to point at the API (e.g., `http://localhost:3000`). Auth token is stored in a cookie named `TOKEN`. On login/register, the client calls `/user/login` and `/user/register`, then validates with `/user/valid`.
 
 ## Latest Changes
 
-    - Dockerized the server
-    - Reset password
-    -
+- Dockerized the server
+- Reset password
+- Removed custom logic, added chess.js for chess logic and chessground for UI
 
 ## Roadmap / ToDo
 
 - Model Games and store them in db
-- Rewrite the game logic in react and avoid explicit DOM manipulation
+- Use chess and chessground for game play.
 - Add loader for smooth transition
 - Add and Style the room Id modal and home page popup
-- Changes are reflected when pieces are moved but not captured.
 - Use tailwind CSS for styling
 - Restrict 2 users per game
 - Restrict user for playing opponent's pieces

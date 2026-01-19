@@ -5,4 +5,9 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+      rollupOptions: {
+        external: ["@lichess-org/chessground/assets/chessground.base.css"]
+      }
+    }
 })
