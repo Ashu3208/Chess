@@ -5,13 +5,13 @@ import { Chess } from "chess.js";
 import { Chessground } from "@lichess-org/chessground";
 
 export default function ChessBoard() {
-  const currUser = useContext(UserContext)
+  const isLoggedin = useContext(UserContext).state.id
   const navigate=useNavigate()
   useEffect(()=>{
-      if(currUser.state.id==null){
+      if(isLoggedin==null){
           navigate('/login')
       }
-  })  
+  }, [isLoggedin, navigate])  
   
   const boardRef = useRef(null);
   const cgRef = useRef(null);
