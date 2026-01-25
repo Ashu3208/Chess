@@ -1,21 +1,21 @@
 import UserContext from "../context/user";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useRef, useContext } from "react";
 import { Chess } from "chess.js";
 import { Chessground } from "@lichess-org/chessground";
 
-export default function ChessBoard() {
-  const isLoggedin = useContext(UserContext).state.id
-  const navigate=useNavigate()
-  useEffect(()=>{
-      if(isLoggedin==null){
-          navigate('/login')
-      }
-  }, [isLoggedin, navigate])  
+export default function Board({ game, onMove }) {
+  const userId = useContext(UserContext).state.id;
+  const navigate = useNavigate();
   
+  useEffect(() => {
+    if (!userId) {
+      navigate("/login");
+    }
+  }, [userId, navigate]);
+
   const boardRef = useRef(null);
   const cgRef = useRef(null);
-  const [game, setGame] = useState(new Chess());
 
   useEffect(() => {
     if (!boardRef.current) return;
@@ -24,7 +24,7 @@ export default function ChessBoard() {
       position: game.fen(),
       draggable: { enabled: true },
       movable: {
-        color: "white",
+        color: game.turn() === "w" ? "white" : "black",
         free: false,
         dests: getLegalDests(game),
       },
@@ -35,6 +35,18 @@ export default function ChessBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // recompute board when game change
+  useEffect(() => {
+      if (!cgRef.current) return;
+      cgRef.current.set({
+        position: game.fen(),
+        movable: {
+          color: game.turn() === "w" ? "white" : "black",
+          dests: getLegalDests(game),
+        },
+      });
+    }, [game]);
+  
   function getLegalDests(chess) {
     const moves = chess.moves({ verbose: true });
     const dests = new Map();
@@ -52,14 +64,7 @@ export default function ChessBoard() {
     const move = updated.move({ from, to, promotion: "q" });
     if (!move) return;
 
-    setGame(updated);
-    cgRef.current.set({
-      position: updated.fen(),
-      movable: {
-        color: updated.turn() === "w" ? "white" : "black",
-        dests: getLegalDests(updated),
-      },
-    });
+    onMove(updated);
   }
 
   return (
@@ -68,3 +73,11 @@ export default function ChessBoard() {
     </div>
   );
 }
+
+
+import PropTypes from "prop-types";
+
+Board.propTypes = {
+  game: PropTypes.object.isRequired,
+  onMove: PropTypes.func.isRequired,
+};
