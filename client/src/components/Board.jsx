@@ -27,6 +27,9 @@ export default function Board({ game, onMove }) {
 
   const boardRef = useRef(null);
   const cgRef = useRef(null);
+  const handleMoveRef = useRef(handleMove);
+  handleMoveRef.current = handleMove;
+
 
   useEffect(() => {
     if (!boardRef.current) return;
@@ -39,7 +42,7 @@ export default function Board({ game, onMove }) {
         free: false,
         dests: getLegalDests(game),
       },
-      events: { move: handleMove },
+      events: { move: (from, to) => handleMoveRef.current(from, to) },
     });
 
     return () => cgRef.current?.destroy();
