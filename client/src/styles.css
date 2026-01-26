@@ -2,9 +2,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #100f0f;
-    margin: 0;
-    padding: 0;
+    background-color: #414447;
     overflow-y: hidden;
 }
 
@@ -71,21 +69,6 @@ body {
 }
 
 /* extra styling */
-
-body {
-    min-height: 100vh;
-    margin: 2rem;
-    font-family: system-ui;
-    font-size: 1.25rem;
-    line-height: 1.5;
-    color: var(--gray-8);
-}
-
-h1 em {
-    color: var(--cyan-9);
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-}
 
 .button {
     border: 0;

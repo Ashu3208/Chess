@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Chess } from "chess.js";
 import Board from "./Board";
+import Timer from "./Timer";
 
 export default function GameScreen() {
   const [game, setGame] = useState(new Chess());
@@ -20,6 +21,10 @@ export default function GameScreen() {
 
   return (
     <div className="flex flex-col items-center mt-6">
+      <div className="flex flex-row gap-y-0">
+        <Timer total={10 * 60} />
+        <Timer total={10 * 60} />
+      </div>
       <Board game={game} onMove={handleMove} />
       <p className="mt-4 text-white text-lg">{statusMessage}</p>
     </div>

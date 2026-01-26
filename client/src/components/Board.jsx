@@ -99,7 +99,7 @@ export default function Board({ game, onMove }) {
 
   return (
     <div className="flex justify-center mt-10">
-      <div ref={boardRef} className="w-120 h-120" />
+      <div ref={boardRef} className="w-3xl h-192" />
       {pendingPromotion && (
         <div className="absolute bg-black/80 p-4 rounded">
           {["q", "r", "b", "n"].map((p) => (
