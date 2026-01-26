@@ -1,6 +1,6 @@
 import UserContext from "../context/user";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useContext } from "react";
+import { useEffect, useRef, useContext, useState } from "react";
 import { Chess } from "chess.js";
 import { Chessground } from "@lichess-org/chessground";
 import { useLocation } from "react-router-dom";
@@ -27,6 +27,7 @@ export default function Board({ game, onMove }) {
 
   const boardRef = useRef(null);
   const cgRef = useRef(null);
+  const [pendingPromotion, setPendingPromotion] = useState(false);
   const handleMoveRef = useRef(handleMove);
   handleMoveRef.current = handleMove;
 
@@ -73,16 +74,45 @@ export default function Board({ game, onMove }) {
   }
 
   function handleMove(from, to) {
-    const updated = new Chess(game.fen());
-    const move = updated.move({ from, to, promotion: "q" });
-    if (!move) return;
+    const legal = game
+      .moves({ verbose: true })
+      .filter((m) => m.from === from && m.to === to);
 
+    if (legal.length > 1) {
+      const options = legal.map((m) => m.promotion);
+      setPendingPromotion({ from, to, options });
+      return;
+    }
+
+    const updated = new Chess(game.fen());
+    updated.move({ from, to });
+    onMove(updated);
+  }
+
+  function promote(piece) {
+    const { from, to } = pendingPromotion;
+    const updated = new Chess(game.fen());
+    updated.move({ from, to, promotion: piece });
+    setPendingPromotion(false);
     onMove(updated);
   }
 
   return (
     <div className="flex justify-center mt-10">
       <div ref={boardRef} className="w-120 h-120" />
+      {pendingPromotion && (
+        <div className="absolute bg-black/80 p-4 rounded">
+          {["q", "r", "b", "n"].map((p) => (
+            <button
+              key={p}
+              onClick={() => promote(p)}
+              className="text-white text-2xl m-2"
+            >
+              {p.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
