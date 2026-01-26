@@ -30,12 +30,11 @@ export default function Board({ game, onMove }) {
   const handleMoveRef = useRef(handleMove);
   handleMoveRef.current = handleMove;
 
-
   useEffect(() => {
     if (!boardRef.current) return;
 
     cgRef.current = Chessground(boardRef.current, {
-      position: game.fen(),
+      fen: game.fen(),
       draggable: { enabled: true },
       movable: {
         color: game.turn() === "w" ? "white" : "black",
@@ -53,7 +52,7 @@ export default function Board({ game, onMove }) {
   useEffect(() => {
     if (!cgRef.current) return;
     cgRef.current.set({
-      position: game.fen(),
+      fen: game.fen(),
       movable: {
         color: game.turn() === "w" ? "white" : "black",
         dests: getLegalDests(game),
