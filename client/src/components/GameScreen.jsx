@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Chess } from "chess.js";
-import Board from './Board'
+import Board from "./Board";
 
 export default function GameScreen() {
   const [game, setGame] = useState(new Chess());

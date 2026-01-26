@@ -3,16 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useContext } from "react";
 import { Chess } from "chess.js";
 import { Chessground } from "@lichess-org/chessground";
+import { useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
+
+Board.propTypes = {
+  game: PropTypes.object.isRequired,
+  onMove: PropTypes.func.isRequired,
+};
 
 export default function Board({ game, onMove }) {
   const userId = useContext(UserContext).state.id;
   const navigate = useNavigate();
-  
+
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const is_guest = params.get("guest");
+
   useEffect(() => {
-    if (!userId) {
+    if (!is_guest && !userId) {
       navigate("/login");
     }
-  }, [userId, navigate]);
+  }, [userId, navigate, is_guest]);
 
   const boardRef = useRef(null);
   const cgRef = useRef(null);
@@ -37,16 +48,16 @@ export default function Board({ game, onMove }) {
 
   // recompute board when game change
   useEffect(() => {
-      if (!cgRef.current) return;
-      cgRef.current.set({
-        position: game.fen(),
-        movable: {
-          color: game.turn() === "w" ? "white" : "black",
-          dests: getLegalDests(game),
-        },
-      });
-    }, [game]);
-  
+    if (!cgRef.current) return;
+    cgRef.current.set({
+      position: game.fen(),
+      movable: {
+        color: game.turn() === "w" ? "white" : "black",
+        dests: getLegalDests(game),
+      },
+    });
+  }, [game]);
+
   function getLegalDests(chess) {
     const moves = chess.moves({ verbose: true });
     const dests = new Map();
@@ -73,11 +84,3 @@ export default function Board({ game, onMove }) {
     </div>
   );
 }
-
-
-import PropTypes from "prop-types";
-
-Board.propTypes = {
-  game: PropTypes.object.isRequired,
-  onMove: PropTypes.func.isRequired,
-};
